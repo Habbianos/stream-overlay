@@ -1,0 +1,33 @@
+{
+  "name": "stream-overlay",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "deploy": "npm run build && gh-pages -d dist",
+    "dump": "shroom dump --url https://www.habbo.com/gamedata/external_variables/1 --location ./public/resources",
+    "dump:finish": "npm run dump:finish:1 && npm run dump:finish:2 && npm run dump:finish:3 && npm run dump:finish:4",
+    "dump:finish:1": "find ./public/resources/effects -type f ! -name \"*.shroom\" -delete",
+    "dump:finish:2": "find ./public/resources/figure -type f ! -name \"*.shroom\" -delete",
+    "dump:finish:3": "find ./public/resources/hof_furni -type f ! -name \"*.shroom\" -delete",
+    "dump:finish:4": "find ./public/resources -type d -empty -delete"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.5.10",
+    "@jankuss/shroom": "^0.7.2",
+    "astro": "^4.5.16",
+    "easystarjs": "^0.4.4",
+    "pixi.js": "^5.3.3",
+    "tmi.js": "^1.8.5",
+    "typescript": "^5.4.4"
+  },
+  "devDependencies": {
+    "@types/tmi.js": "^1.8.6",
+    "gh-pages": "^6.1.1",
+    "sass": "^1.74.1"
+  }
+}
