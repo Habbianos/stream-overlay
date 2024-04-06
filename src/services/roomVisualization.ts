@@ -377,7 +377,7 @@ export type RoomVisOptions = {
 	floorTexture?: number
 }
 
-const FLOOR_TEXTURES = ["/textures/floor/tile.png"]
+const FLOOR_TEXTURES = ["/textures/floor/tile.png"].map(x => import.meta.env.BASE_URL + x)
 
 export default function initRoomVis(options: RoomVisOptions, container: HTMLCanvasElement) {
 
@@ -414,7 +414,7 @@ export default function initRoomVis(options: RoomVisOptions, container: HTMLCanv
 	});
 	const shroom = Shroom.create({
 		application,
-		resourcePath: "/resources",
+		resourcePath: import.meta.env.BASE_URL + "/resources",
 	});
 	const room = Room.create(shroom, {
 		tilemap,

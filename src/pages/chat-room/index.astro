@@ -24,7 +24,7 @@ export type ChatRoomOptions = PubsubOptions &
 	-->
 	<pre><code /></pre>
 	<iframe
-		src="/chat-room/overlay?userName=alynva&userId=155285216&visual=Visual&estilo=Estilo&efeito=Efeito&efeito:48=Car%20Doggy&efeito:dance.1=Hap-Hop&efeito:dance.2=Pogo%20Mogo&efeito:dance.3=Duck%20Funk&efeito:dance.4=Rollie&efeito:100=Dragon"
+		src=""
 		width="1920"
 		height="1080"></iframe>
 </RootLayout>
@@ -155,7 +155,7 @@ export type ChatRoomOptions = PubsubOptions &
 			params.set(reward.action, reward.trigger)
 		}
 
-		const url = window.location.origin + '/chat-room/overlay?' + params.toString()
+		const url = window.location.origin + import.meta.env.BASE_URL + '/chat-room/overlay?' + params.toString()
 		document.querySelector("iframe")!.src = url
 		document.querySelector("pre code")!.innerHTML = url
 	}
