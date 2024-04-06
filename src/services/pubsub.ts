@@ -1,5 +1,4 @@
-import type { ChatRoomParams } from '@types/ChatRoomParams';
-import generateNonce from '@utils/generateNonce';
+import generateNonce from '@/utils/generateNonce';
 
 class PubSub {
 	heartbeatHandle = 0;
@@ -8,7 +7,7 @@ class PubSub {
 
 	} as { broadcaster: number };
 
-	static eventHandlers = {} as { [topic: string]: (message: any) => void};
+	static eventHandlers = {} as { [topic: string]: (message: any) => void };
 
 	constructor(config: { broadcaster: number }) {
 		this.config = config;
@@ -27,7 +26,7 @@ class PubSub {
 	setupListener() {
 		if (this.socket && this.socket.readyState != WebSocket.CLOSED) { return; }
 		const socket = new WebSocket('wss://pubsub-edge.twitch.tv');
-        this.socket = socket
+		this.socket = socket
 		socket.onopen = event => {
 			console.info('PubSub WebSocket connected.');
 			this.heartbeatHandle = setInterval(() => {
@@ -68,24 +67,30 @@ class PubSub {
 	};
 };
 
-// https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
-// https://api.twitch.tv/helix/users?login=alynva
 
-export default function initPubsub(params: ChatRoomParams, handleRewardClaim: (user: string, reward: string, message: string) => void) {
-    const pubsub = new PubSub({
-        broadcaster: params.userId,
-    })
+type TopicsHandlers = {
+	onRewardRedeemed: (user: string, reward: string, message: string) => void
+}
 
-    pubsub
-        .addHandler("community-points-channel-v1", event => {
-            if (event.type === "reward-redeemed") {
-                const user = event.data.redemption.user.login
-                const reward = event.data.redemption.reward.title
-                const message = event.data.redemption.user_input
+export type PubsubOptions = {
+	userId?: number
+}
 
-                handleRewardClaim(user, reward, message)
-            }
-        })
+export default function initPubsub(params: PubsubOptions, handlers: TopicsHandlers) {
+	const pubsub = new PubSub({
+		broadcaster: params.userId!,
+	})
 
-    pubsub.setupListener()
+	pubsub
+		.addHandler("community-points-channel-v1", event => {
+			if (event.type === "reward-redeemed") {
+				const user = event.data.redemption.user.login
+				const reward = event.data.redemption.reward.title
+				const message = event.data.redemption.user_input
+
+				handlers.onRewardRedeemed(user, reward, message)
+			}
+		})
+
+	pubsub.setupListener()
 }

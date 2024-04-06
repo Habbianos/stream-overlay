@@ -1,10 +1,165 @@
 ---
-import RootLayout from '@layouts/RootLayout.astro'
+import RootLayout from "@/layouts/RootLayout.astro";
+import type { ChatHistoryOptions } from "@/services/chatHistory";
+import type { PubsubOptions } from "@/services/pubsub";
+import type { RoomVisOptions } from "@/services/roomVisualization";
+import type { TmiOptions } from "@/services/tmi";
 
+export type ChatRoomOptions = PubsubOptions &
+	TmiOptions &
+	ChatHistoryOptions &
+	RoomVisOptions & {
+		folowerOnly?: boolean;
+	};
 ---
 
 <RootLayout>
-chat room URL builder
-<hr />
-<iframe src="/chat-room/overlay?userName=alynva&userId=155285216" width="1080" height="720"></iframe>
+	<h1>Chat Room URL Builder</h1>
+	<p>Get your userId here: <a href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/" target="_blank">https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/</a> (doesn't need to sign-in)</p>
+	<form></form>
+	<hr />
+	<!--
+	https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
+	https://api.twitch.tv/helix/users?login=alynva
+	-->
+	<pre><code /></pre>
+	<iframe
+		src="/chat-room/overlay?userName=alynva&userId=155285216&visual=Visual&estilo=Estilo&efeito=Efeito&efeito:48=Car%20Doggy&efeito:dance.1=Hap-Hop&efeito:dance.2=Pogo%20Mogo&efeito:dance.3=Duck%20Funk&efeito:dance.4=Rollie&efeito:100=Dragon"
+		width="1920"
+		height="1080"></iframe>
 </RootLayout>
+
+<style lang="scss">
+	pre code {
+		white-space: pre-wrap;
+	}
+	iframe {
+		transform: scale(.4);
+		transform-origin: 0 0;
+	}
+</style>
+
+<script>
+	type Reward = {
+		trigger: string;
+		action: string;
+	};
+	type FormOptions = {
+		userName: string;
+		userId: number;
+		rewards: Reward[];
+	};
+
+	const INITIAL_OPTIONS = {
+		userName: "alynva",
+		userId: 155285216,
+		rewards: [
+			{ trigger: "Visual", action: "visual" },
+			{ trigger: "Estilo", action: "estilo" },
+			{ trigger: "Efeito", action: "efeito" },
+			{ trigger: "Car Doggy", action: "efeito:48" },
+			{ trigger: "Hap-Hop", action: "efeito:dance.1" },
+			{ trigger: "Pogo Mogo", action: "efeito:dance.2" },
+			{ trigger: "Duck Funk", action: "efeito:dance.3" },
+			{ trigger: "Rollie", action: "efeito:dance.4" },
+			{ trigger: "Dragon", action: "efeito:100" },
+		],
+	} as FormOptions;
+	function init() {
+		const form = document.querySelector("form")!;
+		form.addEventListener("submit", (evt) => {
+			evt.preventDefault();
+			update();
+		});
+		form.addEventListener("change", update);
+		form.appendChild(buildFields(INITIAL_OPTIONS, "options"));
+	}
+	function buildFields(data: any, name: string) {
+		const field = document.createElement("fieldset");
+		if (name) {
+			const legend = document.createElement("legend");
+			legend.innerText = name;
+			field.appendChild(legend);
+		}
+
+		if (Array.isArray(data)) {
+			const input = document.createElement("input");
+			input.type = "hidden";
+			input.name = name;
+			field.appendChild(input);
+			for (const d of data) {
+				field.appendChild(buildFields(d, ""));
+			}
+		} else {
+			for (const prop in data) {
+				if (["string", "number"].includes(typeof data[prop])) {
+					const label = document.createElement("label");
+					label.innerText = prop;
+					field.appendChild(label);
+
+					const input = document.createElement("input");
+					input.type =
+						typeof data[prop] === "number" ? "number" : "text";
+					input.value = data[prop];
+					input.name = prop;
+					label.appendChild(input);
+				} else {
+					field.appendChild(buildFields(data[prop], prop));
+				}
+			}
+		}
+		return field;
+	}
+
+	function getCurrentData() {
+		const obj = {} as FormOptions;
+		const rewards = [] as Reward[];
+
+		// Extracting userName and userId
+		const userNameInput = document.querySelector(
+			'input[name="userName"]',
+		) as HTMLInputElement;
+		const userIdInput = document.querySelector(
+			'input[name="userId"]',
+		) as HTMLInputElement;
+		obj.userName = userNameInput.value.trim();
+		obj.userId = parseInt(userIdInput.value.trim());
+
+		// Extracting rewards
+		const rewardFieldsets = document.querySelectorAll(
+			"fieldset:has(input[type=hidden]) fieldset",
+		);
+		rewardFieldsets.forEach((fieldset) => {
+			const triggerInput = fieldset.querySelector(
+				'input[name="trigger"]',
+			) as HTMLInputElement;
+			const actionInput = fieldset.querySelector(
+				'input[name="action"]',
+			) as HTMLInputElement;
+			rewards.push({
+				trigger: triggerInput.value.trim(),
+				action: actionInput.value.trim(),
+			});
+		});
+
+		obj.rewards = rewards;
+
+		return obj;
+	}
+	function update() {
+		const data = getCurrentData()
+		const params = new URLSearchParams()
+		params.set('userName', data.userName)
+		params.set('userId', data.userId+'')
+		for (const reward of data.rewards) {
+			params.set(reward.action, reward.trigger)
+		}
+
+		const url = window.location.origin + '/chat-room/overlay?' + params.toString()
+		document.querySelector("iframe")!.src = url
+		document.querySelector("pre code")!.innerHTML = url
+	}
+	
+	init();
+	update()
+</script>
