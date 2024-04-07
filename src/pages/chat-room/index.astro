@@ -14,29 +14,597 @@ export type ChatRoomOptions = PubsubOptions &
 ---
 
 <RootLayout>
-	<h1>Chat Room URL Builder</h1>
-	<p>Get your userId here: <a href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/" target="_blank">https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/</a> (doesn't need to sign-in)</p>
-	<form></form>
-	<hr />
-	<!--
-	https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/
-	https://api.twitch.tv/helix/users?login=alynva
-	-->
-	<pre><code /></pre>
-	<iframe
-		src=""
-		width="1920"
-		height="1080"></iframe>
+	<section>
+		<div class="container">
+			<nav>
+				<span>Chat Room Overlay</span>
+				<a href="#config_info">Livestream</a>
+				<a href="#config_count">Rewards</a>
+				<a href="#config_song">Room</a>
+				<a href="#config_tema">Data storage</a>
+				<hr />
+				<span>Result</span>
+				<a href="#config_atal">Preview</a>
+				<hr />
+				<div id="our-media">
+					<a href="http://epic.ufscar.site" target="_blank"
+						><i class="fas fa-globe fa-lg"></i></a
+					>
+					<a
+						href="https://www.facebook.com/epicufscar"
+						target="_blank"><i class="fab fa-facebook fa-lg"></i></a
+					>
+					<a
+						href="https://www.linkedin.com/company/epic-ufscar/"
+						target="_blank"><i class="fab fa-linkedin fa-lg"></i></a
+					>
+					<a href="https://github.com/epicufscar" target="_blank"
+						><i class="fab fa-github-square fa-lg"></i></a
+					>
+				</div>
+			</nav>
+
+			<section>
+				<section id="config_info">
+					<header>
+						<h1>Livestream Info</h1>
+						<p>Required details to watch your livestream chat in real time</p>
+					</header>
+					<article>
+						<form id="fm_info">
+							<label for="#ipt_org">Display name</label>
+							<input
+								type="text"
+								id="ipt_org"
+								title="Your Twitch user name"
+								placeholder="Your Twitch user name"
+								tabindex="1"
+							/>
+							<label for="#ipt_title">Streammer ID</label>
+							<input
+								type="text"
+								id="ipt_title"
+								title="Your Twitch user ID"
+								placeholder="Your Twitch user ID"
+								tabindex="2"
+							/>
+							<section class="sub_info">
+								<p>You can get your ID <a href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/" target="_blank">here</a>, it doesn't need to sign-in</p>
+							</section>
+						</form>
+					</article>
+				</section>
+				<hr />
+				<section id="config_count">
+					<header>
+						<h1>Available Rewards</h1>
+						<p>Configure which rewards triggers actions in your overlay</p>
+					</header>
+					<article>
+						<form id="fm_time">
+							<label for="#ipt_time_2_end">Reward name</label>
+							<div class="mesclar">
+								<input
+									type="text"
+									id="ipt_time_2_end"
+									title="Enter the exact reward name you have"
+									placeholder="Enter the exact reward name you have"
+								/>
+							</div>
+							<section class="sub_info">
+								<p>If you enter the same reward multiple times, one will be picked randomly</p>
+							</section>
+						</form>
+						<form id="fm_add_time">
+							<label for="#ipt_time_2_add"
+								>Action</label
+							>
+							<div class="mesclar">
+								<select>
+									<option value="fx">Effect</option>
+								</select>
+								<input
+									type="text"
+									id="ipt_time_2_add"
+									title="Predefined value"
+									placeholder="Predefined value"
+								/>
+							</div>
+							<section class="sub_info">
+								<p>If you don't fill a prefedined value, remember to enable viewers to fill it in when claiming the reward</p>
+							</section>
+						</form>
+					</article>
+					<article>
+						<section class="sub_info">
+							<header>
+								<h2>Note</h2>
+							</header>
+							<p>Remmember that you can configure the reward to skip the queue, as we won't confirm the claim in your behalfe. The overley will only capture claims while the page is open.</p>
+						</section>
+					</article>
+				</section>
+			</section>
+		</div>
+	</section>
 </RootLayout>
 
 <style lang="scss">
-	pre code {
-		white-space: pre-wrap;
+	
+/* Espaçamento do topo em âncoras quando são destacadas */
+/* VARS */ :target:before {
+	--anchor_space: 30px;
+}
+:target:before {
+	content: "";
+	display: block;
+	visibility: hidden;
+	height: var(--anchor_space);
+	margin: calc(0px - var(--anchor_space)) 0 0;
+}
+
+body {
+	--nav_w: 200px;
+	--left_bg_color: #f3f3f3;
+	--right_bg_color: #fff;
+	margin: 0;
+}
+body > section {
+	font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	background-image: linear-gradient(to right, var(--left_bg_color) 50%, var(--right_bg_color) 50%);
+	width: 100vw;
+	height: 100vh;
+	overflow: hidden auto;
+}
+section > .container {
+	max-width: 70%;
+	min-height: 100%;
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	margin: 0 auto;
+}
+section > .container > * {
+	box-sizing: border-box;
+	padding-top: 40px;
+	height: 100%;
+}
+nav {
+	width: var(--nav_w);
+	background-color: var(--left_bg_color);
+	display: flex;
+	flex-direction: column;
+	padding-right: 7px;
+}
+nav > * {
+	padding: 8px 10px;
+}
+nav #our-media {
+	display: flex;
+	flex-flow: row wrap;
+	padding-right: 4px;
+	padding-left: 4px;
+}
+nav #our-media a:focus, nav #our-media a:active {
+	color: #b9bbbe;
+	background-color: transparent;
+}
+nav #our-media a:hover {
+	color: #72767d;
+	background-color: transparent;
+}
+nav #our-media a {
+	color: #b9bbbe;
+	margin: 3px;
+}
+nav > span {
+	text-transform: uppercase;
+	font-size: 9pt;
+	color: #b9c0d0;
+}
+nav a {
+	border-radius: 3px;
+	font-size: 12pt;
+	text-decoration: unset;
+	color: inherit;
+}
+nav a:hover {
+	background-color: #e3e3e5;
+}
+nav a:focus, nav a:active {
+	background-color: #7289da;
+	color: white;
+}
+section:target {
+	animation-name: pulse;
+	animation-direction: normal;
+	animation-duration: 1s;
+	animation-iteration-count: 2;
+	animation-timing-function: ease;
+}
+@keyframes pulse {
+	0% {
+		margin: initial;
+		padding: initial;
+		background-color: initial;
+		border-radius: 3px;
 	}
-	iframe {
-		transform: scale(.4);
-		transform-origin: 0 0;
+	50% {
+		margin: -5px;
+		padding: 5px;
+		background-color: #f3f3f3;
+		border-radius: 3px;
 	}
+	100% {
+		margin: initial;
+		padding: initial;
+		background-color: initial;
+		border-radius: 3px;
+	}
+}
+section > .container > section {
+	background-color: var(--right_bg_color);
+	padding-left: 40px;
+	flex: 1;
+	padding-bottom: 50vh;
+}
+header {
+	margin-bottom: 8px;
+}
+header > h1, header > h2 {
+	margin: 0 0 5px;
+	font-weight: bold;
+}
+header > h1 {
+	font-size: 13pt;
+}
+header > h2 {
+	font-size: 8pt;
+	color: #a7abaf;
+}
+/* header >  */p {
+	margin: 5px 0 0;
+	font-size: 8pt;
+	color: #b4b6b9;
+}
+
+article > section {
+	background-color: #f8f9f9;
+	border: 1px solid #dcddde;
+	border-radius: 3px;
+	padding: 23px 20px;
+	margin: 15px 0;
+}
+
+
+form, fieldset {
+	display: flex;
+	flex-direction: column;
+}
+#fm_info .social_media_row {
+	display: flex;
+	flex-direction: row;
+	margin: 5px -5px;
+}
+#fm_info .social_media_row > * {
+	flex-basis: 0;
+	flex-grow: 1;
+	margin: 0 5px;
+}
+#config_count article {
+	display: flex;
+	flex-direction: row;
+	// margin: 0 -5px;
+	gap: 5px;
+}
+#config_count form {
+	flex-basis: 0;
+	flex-grow: 1;
+	// margin: 0 5px;
+}
+#config_song .hide {
+	display: none;
+}
+#fm_song input[type=url] {
+	padding-right: 100px;
+}
+#fm_song section, .sub_info {
+	margin: 5px 0 0;
+    font-size: 8pt;
+    color: #b4b6b9;
+}
+#fm_song #sugestoes {
+	margin: 0;
+	padding: 0;
+	display: inline;
+	cursor: pointer;
+
+	--playlist_color: #000;
+	--song_color: #F44336;
+}
+#fm_song #sugestoes > .icones_clonaveis {
+	display: inline-block;
+    width: 0;
+    overflow: hidden;
+    height: 0;
+}
+#fm_song #sugestoes .sugestao_item:not(:hover) {
+	opacity: .3;
+}
+#fm_song #sugestoes .sugestao_item {
+    border: solid 1px black;
+    border-radius: 50px;
+	padding: 2px 10px 2px 2px;
+	margin: 2px;
+	display: inline-flex;
+	flex-direction: row;
+	color: #737c87;
+}
+#fm_song #sugestoes .sugestao_item .fa-layers {
+    background-color: black;
+    color: white;
+    border-radius: 50%;
+	padding: 3px;
+	margin-right: 4px;
+}
+#fm_song #sugestoes .sugestao_item.playlist {
+	border-color: var(--playlist_color)
+}
+#fm_song #sugestoes .sugestao_item.playlist .fa-layers {
+	background-color: var(--playlist_color)
+}
+#fm_song #sugestoes .sugestao_item.song {
+	border-color: var(--song_color)
+}
+#fm_song #sugestoes .sugestao_item.song .fa-layers {
+	background-color: var(--song_color)
+}
+#fm_song ~ #playlist_details #playlist_controls {
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+#fm_song ~ #playlist_details #playlist_controls button {
+	border: none;
+	background: none;
+	margin: 5px;
+	color: #888;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	outline: none;
+	box-sizing: border-box;
+	cursor: pointer;
+}
+#fm_song ~ #playlist_details ul {
+	margin: 0 -20px -23px;
+	padding: 0;
+	background-color: #f0f0f0;
+	max-height: calc(4 * 56px);
+	overflow: auto;
+}
+#fm_song ~ #playlist_details ul li {
+	list-style: none;
+	padding: 4px 8px 4px 0
+}
+#fm_song ~ #playlist_details ul li > a {
+	height: 56px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: row;
+	text-decoration: none;
+}
+#fm_song ~ #playlist_details ul li > a > span {
+	width: 24px;
+	display: flex;
+	flex: none;
+    flex-direction: column;
+    text-align: center;
+	justify-content: center;
+	font-size: 12px;
+	font-weight: 400;
+    line-height: 1.5rem;
+	color: #888;
+}
+#fm_song ~ #playlist_details ul li > a > img {
+	height: 100%;
+	width: auto;
+}
+#fm_song ~ #playlist_details ul li > a > div {
+	padding-left: 8px;
+	width: 100%;
+}
+#fm_song ~ #playlist_details ul li > a > div > * {
+	width: 100%;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: #0a0a0a;
+}
+#fm_song ~ #playlist_details ul li > a > div > h3 {
+	font-size: 14px;
+	margin: 0px 0px 4px;
+}
+#fm_song ~ #playlist_details ul li > a > div > span {
+	font-size: 13px;
+	font-weight: 400;
+}
+#fm_theme {
+	display: flex;
+	flex-direction: row;
+	margin: -4px;
+}
+#fm_theme > * {
+	margin: 4px;
+}
+#fm_theme [type=radio] {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+#fm_theme [type=radio] + img {
+	cursor: pointer;
+}
+#fm_theme [type=radio]:checked + img {
+	border-color: #7289da;
+	background-color: #7289da;
+}
+#fm_theme .theme_preview:hover {
+	border-color: #72767d;
+}
+#fm_theme .theme_preview {
+	width: 80px;
+	height: 80px;
+	object-fit: cover;
+	padding: 3px;
+	border: 1px solid #dcddde;
+	border-radius: 3px;
+}
+#config_atal form {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	margin: 0 -5px;
+}
+#config_atal form > div {
+	flex: 0 0 50%;
+	max-width: calc(50% - 10px);
+	margin: 15px 5px;
+}
+#config_atal input {
+	cursor: pointer;
+}
+#config_atal input:hover, #config_atal input:focus, #config_atal input.gravando {
+	border-color: #f2bfbf;
+}
+#config_atal input.gravando {
+	color: #f04747;
+	animation: animacao_gravando .4s infinite alternate ease;
+}
+#config_atal input.gravando ~ button {
+	font-size: 0;
+}
+#config_atal input.gravando ~ button::before {
+	content: attr(data-text);
+	font-size: initial;
+}
+@keyframes animacao_gravando {
+	from {
+		box-shadow: 0 0 8px -3px rgb(255, 0, 0);
+	}
+	to {
+		box-shadow: 0 0 13px -3px rgb(255, 0, 0);
+	}
+}
+#config_atal input.gravando ~ button {
+	background-color: #f2e1e3 !important;
+	color: #f06847
+}
+#config_atal input:not(.gravando) ~ button {
+	pointer-events: none;
+}
+#config_atal input:not(.gravando):not(:hover) ~ button {
+	font-size: 0;
+}
+#config_atal input:not(.gravando):not(:hover) ~ button::after {
+    font-size: 15pt;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+	content: "\f11c";
+	color: #333;
+}
+form label {
+	color: #72767d;
+	font-size: 9pt;
+	font-weight: bold;
+	text-transform: uppercase;
+	margin: 17px 0 9px;
+}
+form input, form button, form select {
+	outline: none;
+	width: 100%;
+	padding: 13px;
+	border: solid 1px #c7c9cb;
+	border-radius: 3px;
+	background-color: #fbfbfb;
+	box-sizing: border-box;
+	font-family: inherit;
+	font-size: 12pt;
+	text-overflow: ellipsis;
+}
+form select {
+	cursor: pointer;
+}
+form :has(select + input) {
+	display: flex;
+
+	select {
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		border-right: 0;
+	}
+
+	input {
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+}
+
+input[type=submit], form button {
+	background-color: #edeef1 !important;
+	border: 0 !important;
+	color: #7f8993;
+	cursor: pointer;
+}
+form input:disabled, form select:disabled {
+	background-color: #fcfcfd;
+	border-color: #eaeaea;
+	cursor: not-allowed;
+}
+form input:active,
+form input:focus,
+form select:active,
+form select:focus {
+	border-color: #7289da;
+}
+form input[type=time] {
+	padding-right: 100px;
+	height: 49px;
+}
+form div.mesclar {
+	position: relative;
+}
+form div.mesclar input ~ input[type=submit], form div.mesclar input ~ button {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: fit-content;
+	margin: 5px;
+	padding: 9px;
+}
+
+fieldset {
+	padding: 0;
+	border: 0;
+	margin: 0;
+}
+
+hr:not(:root) {
+	width: 100%;
+	padding: 0;
+	border: 0;
+	border-top: solid 1px #e2e3e5;
+}
+section > hr {
+	margin: 30px 0;
+}
+
+.container > div {
+	width: 36px;
+	margin-left: 10px;
+	position: relative;
+}
 </style>
 
 <script>
@@ -69,10 +637,10 @@ export type ChatRoomOptions = PubsubOptions &
 		const form = document.querySelector("form")!;
 		form.addEventListener("submit", (evt) => {
 			evt.preventDefault();
-			update();
+			// update();
 		});
-		form.addEventListener("change", update);
-		form.appendChild(buildFields(INITIAL_OPTIONS, "options"));
+		// form.addEventListener("change", update);
+		// form.appendChild(buildFields(INITIAL_OPTIONS, "options"));
 	}
 	function buildFields(data: any, name: string) {
 		const field = document.createElement("fieldset");
@@ -147,19 +715,23 @@ export type ChatRoomOptions = PubsubOptions &
 		return obj;
 	}
 	function update() {
-		const data = getCurrentData()
-		const params = new URLSearchParams()
-		params.set('userName', data.userName)
-		params.set('userId', data.userId+'')
+		const data = getCurrentData();
+		const params = new URLSearchParams();
+		params.set("userName", data.userName);
+		params.set("userId", data.userId + "");
 		for (const reward of data.rewards) {
-			params.set(reward.action, reward.trigger)
+			params.set(reward.action, reward.trigger);
 		}
 
-		const url = window.location.origin + import.meta.env.BASE_URL + '/chat-room/overlay?' + params.toString()
-		document.querySelector("iframe")!.src = url
-		document.querySelector("pre code")!.innerHTML = url
+		const url =
+			window.location.origin +
+			import.meta.env.BASE_URL +
+			"/chat-room/overlay?" +
+			params.toString();
+		// document.querySelector("iframe")!.src = url;
+		// document.querySelector("pre code")!.innerHTML = url;
 	}
-	
+
 	init();
-	update()
+	update();
 </script>
