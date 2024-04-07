@@ -1,0 +1,41 @@
+---
+interface Props {
+	title?: string;
+	info?: string;
+}
+const { title, info } = Astro.props;
+---
+
+<section>
+	<header>
+		<h2>{title ?? "Note"}</h2>
+	</header>
+	<p>{info ?? <slot name="info" />}</p>
+</section>
+
+<style lang="scss">
+	section {
+		margin: 5px 0 0;
+		font-size: 8pt;
+		color: #b4b6b9;
+		background-color: #f8f9f9;
+		border: 1px solid #dcddde;
+		border-radius: 3px;
+		padding: 23px 20px;
+		margin: 15px 0;
+	}
+	h2 {
+		margin: 0 0 5px;
+		font-weight: bold;
+		font-size: 8pt;
+		color: #a7abaf;
+	}
+	p {
+		margin: 0;
+	}
+	p:not(:empty) {
+		margin: 5px 0 0;
+		font-size: 8pt;
+		color: #b4b6b9;
+	}
+</style>

@@ -1,0 +1,18 @@
+---
+interface Props {
+	name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<span>{name}</span>
+
+<style lang="scss">
+	span {
+		text-transform: uppercase;
+		font-size: 9pt;
+		color: #b9c0d0;
+		padding: 8px 10px;
+	}
+</style>

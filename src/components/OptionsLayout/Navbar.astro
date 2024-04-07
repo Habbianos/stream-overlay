@@ -1,0 +1,18 @@
+---
+interface Props {}
+---
+
+<nav>
+	<slot />
+</nav>
+
+<style lang="scss">
+	nav {
+		width: var(--nav_w);
+		background-color: var(--left_bg_color);
+		display: flex;
+		flex-direction: column;
+		padding-right: 7px;
+		padding-top: 40px;
+	}
+</style>

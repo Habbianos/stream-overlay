@@ -1,0 +1,28 @@
+---
+interface Props {
+	link: string;
+	icon?: string;
+}
+
+const { link, icon } = Astro.props;
+---
+
+<a href={link} target="_blank">
+	<i class:list={[icon ?? "fas fa-globe", "fa-lg"]}></i>
+</a>
+
+<style lang="scss">
+	a:focus,
+	a:active {
+		color: #b9bbbe;
+		background-color: transparent;
+	}
+	a:hover {
+		color: #72767d;
+		background-color: transparent;
+	}
+	a {
+		color: #b9bbbe;
+		margin: 3px;
+	}
+</style>

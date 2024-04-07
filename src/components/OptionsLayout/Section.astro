@@ -1,0 +1,77 @@
+---
+interface Props {
+	id?: string;
+	title: string;
+	info?: string;
+}
+
+const { id, title, info } = Astro.props;
+---
+
+<section id={id}>
+	<header>
+		<h1>{title}</h1>
+		<p>{info ?? <slot name="info" />}</p>
+	</header>
+	<form>
+		<slot />
+	</form>
+</section>
+
+<style lang="scss">
+	:target:before {
+		--anchor_space: 30px;
+	}
+	:target:before {
+		content: "";
+		display: block;
+		visibility: hidden;
+		height: var(--anchor_space);
+		margin: calc(0px - var(--anchor_space)) 0 0;
+	}
+	section:target {
+		animation-name: pulse;
+		animation-direction: normal;
+		animation-duration: 1s;
+		animation-iteration-count: 2;
+		animation-timing-function: ease;
+	}
+	@keyframes pulse {
+		0% {
+			margin: initial;
+			padding: initial;
+			background-color: initial;
+			border-radius: 3px;
+		}
+		50% {
+			margin: -5px;
+			padding: 5px;
+			background-color: #f3f3f3;
+			border-radius: 3px;
+		}
+		100% {
+			margin: initial;
+			padding: initial;
+			background-color: initial;
+			border-radius: 3px;
+		}
+	}
+
+	h1 {
+		margin: 0 0 5px;
+		font-weight: bold;
+		font-size: 13pt;
+	}
+	p {
+		margin: 0;
+	}
+	p:not(:empty) {
+		margin: 5px 0 0;
+		font-size: 8pt;
+		color: #b4b6b9;
+	}
+	form {
+		display: flex;
+		flex-direction: column;
+	}
+</style>
