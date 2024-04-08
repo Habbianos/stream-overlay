@@ -18,7 +18,8 @@ export type ChatRoomOptions = PubsubOptions &
 	TmiOptions &
 	ChatHistoryOptions &
 	RoomVisOptions & {
-		folowerOnly?: boolean;
+		rewards: { trigger: string, action: string, value?: string }[]
+		onlyFollowers?: boolean;
 	};
 ---
 
@@ -27,8 +28,9 @@ export type ChatRoomOptions = PubsubOptions &
 		<NavbarTitle name="Chat Room Overlay" />
 		<NavbarLink name="Livestream" link="#livestream" />
 		<NavbarLink name="Rewards" link="#rewards" />
-		<NavbarLink name="Room" link="#room" />
-		<NavbarLink name="Data storage" link="#data" />
+		<NavbarLink name="Room Layer" link="#room" />
+		<NavbarLink name="Chat Layer" link="#chat" />
+		<NavbarLink name="Data Layer" link="#data" />
 		<NavbarSep />
 		<NavbarTitle name="Result" />
 		<NavbarLink name="Preview" link="#preview" />
@@ -98,9 +100,225 @@ export type ChatRoomOptions = PubsubOptions &
 				/>
 			</div>
 		</ColumnFields>
+		<Field
+			label="Only followes"
+			placeholder="Require the user to follow your channel"
+			type="checkbox"
+			id="onlyFollowers"
+			name="onlyFollowers"
+			info="Require the user to follow your channel"
+		/>
 		<Note
 			info="Remmember that you can configure the reward to skip the queue, as we won't confirm the claim in your behalfe. The overley will only capture claims while the page is open."
 		/>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="room"
+		title="Room Layer"
+		info="A room preview with the current active chatters."
+	>
+		<Field
+			label="Hide Floor"
+			placeholder="Should the floor be visible?"
+			type="checkbox"
+			id="floorHide"
+			name="floorHide"
+		/>
+		<Field
+			label="Floor Plan"
+			placeholder="Paste the floor plan here"
+			type="text"
+			id="floorPlan"
+			name="floorPlan"
+		/>
+		<Field
+			label="Floor Color"
+			placeholder="Choose the color of the floor"
+			type="color"
+			id="floorColor"
+			name="floorColor"
+			inputProps={{
+				value: "#989865",
+			}}
+		/>
+		<Field
+			label="Floor Texture"
+			placeholder="Choose the floor texture"
+			type="radioImage"
+			options={[
+				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+			]}
+			id="floorTexture"
+			name="floorTexture"
+		/>
+		<Field
+			label="Hide Walls"
+			placeholder="Choose the color of the floor"
+			type="checkbox"
+			id="floorColor"
+			name="floorColor"
+			inputProps={{
+				checked: true,
+			}}
+		/>
+		<Field
+			label="Wall Color"
+			placeholder="Choose the color of the wall"
+			type="color"
+			id="wallColor"
+			name="wallColor"
+			inputProps={{
+				value: "#ffffff",
+			}}
+		/>
+		<Field
+			label="Wall Texture"
+			placeholder="Choose the wall texture"
+			type="radioImage"
+			options={[
+				{ name: "Default (none)", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+			]}
+			id="wallTexture"
+			name="wallTexture"
+		/>
+		<ColumnFields allowMultiple>
+			<div>
+				<Field
+					label="Wall Height"
+					placeholder="Choose the height of the wall"
+					type="number"
+					id="wallHeight"
+					name="wallHeight"
+				/>
+			</div>
+			<div>
+				<Field
+					label="Wall Depth"
+					placeholder="Choose the depth of the wall"
+					type="number"
+					id="wallDepth"
+					name="wallDepth"
+				/>
+			</div>
+		</ColumnFields>
+		<ColumnFields allowMultiple>
+			<div>
+				<Field
+					label="Canvas Width"
+					placeholder="Width in pixels"
+					type="number"
+					id="canvasWidth"
+					name="canvasWidth"
+					info="The width of the canvas where the room will be rendered in."
+				/>
+			</div>
+			<div>
+				<Field
+					label="Canvas Height"
+					placeholder="Height in pixels"
+					type="number"
+					id="canvasHeight"
+					name="canvasHeight"
+					info="The height of the canvas where the room will be rendered in."
+				/>
+			</div>
+		</ColumnFields>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="chat"
+		title="Chat Layer"
+		info=""
+	>
+		<Field
+			label="Display name"
+			placeholder="Your Twitch user name"
+			type="text"
+			id="userName"
+			name="userName"
+		/>
+		<Field
+			label="Streammer ID"
+			placeholder="Your Twitch user ID"
+			type="text"
+			id="userId"
+			name="userId"
+		>
+			<Fragment slot="info">
+				You can get your ID <a
+					href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/"
+					target="_blank">here</a
+				>, it doesn't need to sign-in
+			</Fragment>
+		</Field>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="data"
+		title="Data Layer"
+		info=""
+	>
+		<Field
+			label="Default Look"
+			placeholder="Your Twitch user name"
+			type="text"
+			id="userName"
+			name="userName"
+		/>
+		<Field
+			label="Streammer ID"
+			placeholder="Your Twitch user ID"
+			type="text"
+			id="userId"
+			name="userId"
+		>
+			<Fragment slot="info">
+				You can get your ID <a
+					href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/"
+					target="_blank">here</a
+				>, it doesn't need to sign-in
+			</Fragment>
+		</Field>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="room"
+		title="Preview the Result"
+	>
+		<Field
+			label="Display name"
+			placeholder="Your Twitch user name"
+			type="text"
+			id="userName"
+			name="userName"
+		/>
+		<Field
+			label="Streammer ID"
+			placeholder="Your Twitch user ID"
+			type="text"
+			id="userId"
+			name="userId"
+		>
+			<Fragment slot="info">
+				You can get your ID <a
+					href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/"
+					target="_blank">here</a
+				>, it doesn't need to sign-in
+			</Fragment>
+		</Field>
 	</Section>
 </OptionsLayout>
 

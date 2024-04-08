@@ -372,9 +372,15 @@ export type RoomVisOptions = {
 	tilemap?: string
 	width?: number
 	height?: number
+	hideFloor?: boolean
+	floorPlan?: string
 	floorColor?: string
-	hideWalls?: number
 	floorTexture?: number
+	hideWalls?: boolean
+	wallColor?: string
+	wallTexture?: number
+	wallHeight?: number
+	wallDepth?: number
 }
 
 const FLOOR_TEXTURES = ["/textures/floor/tile.png"].map(x => import.meta.env.BASE_URL + x)

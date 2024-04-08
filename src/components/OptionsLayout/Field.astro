@@ -2,7 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 
 type OneField = {
-	type: astroHTML.JSX.HTMLInputTypeAttribute | "select";
+	type: astroHTML.JSX.HTMLInputTypeAttribute | "select" | "radioImage";
 	name: string;
 	placeholder: string;
 	inputProps?: (HTMLAttributes<"input"> | HTMLAttributes<"select">);
@@ -10,7 +10,7 @@ type OneField = {
 };
 
 type MultipleFields = {
-	types: (astroHTML.JSX.HTMLInputTypeAttribute | "select")[];
+	types: (astroHTML.JSX.HTMLInputTypeAttribute | "select" | "radioImage")[];
 	names: string[];
 	placeholders: string[];
 	inputsProps?: (HTMLAttributes<"input"> | HTMLAttributes<"select">)[];
@@ -25,7 +25,7 @@ type Props = {
 const { label, info, id, ...props } = Astro.props;
 ---
 
-<label for={`#${id}`}>{label}</label>
+<label for={id}>{label}</label>
 <div class:list={["rows"]}>
 	{'type' in props && <div class:list={["columns"]}>{(props.type === 'select' ? <select
 		id={id}
@@ -35,7 +35,12 @@ const { label, info, id, ...props } = Astro.props;
 	>
 		<option disabled selected>{props.placeholder}</option>
 		{props.options?.map(o => <option value={o.value}>{o.name}</option>)}
-	</select> : <input
+	</select> : props.type === 'radioImage' ? <>
+		{props.options?.map((o, i) => <label class:list={["radioImage"]}>
+			<input type="radio" name={props.name} checked={i === 0}>
+			<img src={o.value} title={o.name} />
+		</label>)}
+	</> : <input
 		type={props.type}
 		id={id}
 		name={props.name}
@@ -52,7 +57,7 @@ const { label, info, id, ...props } = Astro.props;
 		>
 			<option disabled selected>{props.placeholders[i]}</option>
 			{props.options?.[i]?.map(o => <option value={o.value}>{o.name}</option>)}
-		</select> : <input
+		</select> : t === 'radioImage' ? <></> :<input
 			type={t}
 			id={id}
 			name={props.names[i]}
@@ -66,12 +71,33 @@ const { label, info, id, ...props } = Astro.props;
 
 <style lang="scss">
 	label {
+		cursor: pointer;
+	}
+	label[for] {
 		display: block;
 		color: #72767d;
 		font-size: 9pt;
 		font-weight: bold;
 		text-transform: uppercase;
 		margin: 17px 0 9px;
+	}
+	label.radioImage {
+		border: solid 1px #c7c9cb;
+		border-radius: 3px;
+		background-color: #fbfbfb;
+		
+		&:has(input:checked) {
+			border-color: #7289da;
+		}
+		input[type=radio] {
+			display: none;
+		}
+
+		img {
+			width: 48px;
+			height: 48px;
+			object-fit: none;
+		}
 	}
 
 	input,
@@ -88,6 +114,16 @@ const { label, info, id, ...props } = Astro.props;
 		font-size: 12pt;
 		text-overflow: ellipsis;
 		height: 3em;
+
+		&[type=checkbox] {
+			width: 48px;
+			margin: 0;
+			cursor: pointer;
+		}
+		&[type=color] {
+			padding: 5px;
+			cursor: pointer;
+		}
 
 		&:disabled {
 			background-color: #fcfcfd;
