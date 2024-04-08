@@ -1,0 +1,63 @@
+---
+interface Props {
+	allowMultiple?: boolean
+}
+
+const { allowMultiple } = Astro.props
+---
+<column-fields class:list={["column-fields"]} data-allow-multiple={allowMultiple ? 1 : 0}>
+	<slot />
+</column-fields>
+
+<style lang="scss">
+	column-fields {
+		display: flex;
+		gap: 5px;
+	}
+	column-fields > :global(*) {
+		flex: 1;
+	}
+	column-fields :global(.source) {
+		display: none;
+	}
+</style>
+
+<script>
+	class ColumnFields extends HTMLElement {
+		constructor() {
+			super()
+
+			const allowMultiple = !!(+(this.dataset.allowMultiple ?? 0))
+			
+			if (!allowMultiple) return
+			const sources = this.querySelectorAll<HTMLElement>(".columns")
+			for (const source of sources) {
+				source.classList.add("source")
+			}
+			this.makeCopy(sources)
+
+		}
+		private makeCopy(sources: NodeListOf<HTMLElement>) {
+			for (const source of sources) {
+				const clone = source.cloneNode(true) as HTMLElement
+				clone.classList.remove("source")
+				source.parentElement?.appendChild(clone)
+	
+				clone.querySelectorAll<HTMLInputElement>("input").forEach(elem => elem.addEventListener("change", () => {
+					let rows = Array.from(this.querySelectorAll<HTMLElement>(".rows"))
+						.map(r => Array.from(r.querySelectorAll<HTMLInputElement>("input")))
+					rows = rows[0].map((_, i) => rows.map(r => r[i]))
+					rows.forEach((r, i) => {
+						if (r.some(e => e.closest(".columns")?.classList.contains("source"))) return
+						if (i !== rows.length - 1 && r.every(e => !e.value)) r.forEach(e => e.closest(".columns")?.remove())
+						else if (i === rows.length - 1 && r.some(e => e.value)) this.makeCopy(sources)
+					})
+				}))
+			}
+		}
+		private removeCopy(sources: NodeListOf<HTMLElement>) {
+
+		}
+	}
+	customElements.define('column-fields', ColumnFields)
+</script>

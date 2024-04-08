@@ -1,29 +1,72 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 
-interface Props {
-	label: string;
+type OneField = {
+	type: astroHTML.JSX.HTMLInputTypeAttribute | "select";
+	name: string;
 	placeholder: string;
+	inputProps?: (HTMLAttributes<"input"> | HTMLAttributes<"select">);
+	options?: { name: string, value: string }[];
+};
+
+type MultipleFields = {
+	types: (astroHTML.JSX.HTMLInputTypeAttribute | "select")[];
+	names: string[];
+	placeholders: string[];
+	inputsProps?: (HTMLAttributes<"input"> | HTMLAttributes<"select">)[];
+	options?: { name: string, value: string }[][];
+};
+
+type Props = {
+	label: string;
 	info?: string;
-	type: astroHTML.JSX.HTMLInputTypeAttribute;
 	id: string;
-	inputProps?: HTMLAttributes<"input">;
-}
-const { label, placeholder, info, type, id, inputProps } = Astro.props;
+} & (OneField | MultipleFields);
+const { label, info, id, ...props } = Astro.props;
 ---
 
 <label for={`#${id}`}>{label}</label>
-<input
-	type={type}
-	id={id}
-	title={placeholder}
-	placeholder={placeholder}
-	{...inputProps}
-/>
+<div class:list={["rows"]}>
+	{'type' in props && <div class:list={["columns"]}>{(props.type === 'select' ? <select
+		id={id}
+		name={props.name}
+		title={props.placeholder}
+		{...props.inputProps}
+	>
+		<option disabled selected>{props.placeholder}</option>
+		{props.options?.map(o => <option value={o.value}>{o.name}</option>)}
+	</select> : <input
+		type={props.type}
+		id={id}
+		name={props.name}
+		title={props.placeholder}
+		placeholder={props.placeholder}
+		{...props.inputProps}
+	/>)}</div>}
+	{'types' in props && <div class:list={["columns"]}>
+		{props.types.map((t, i) => (t === 'select' ? <select
+			id={id}
+			name={props.names[i]}
+			title={props.placeholders[i]}
+			{...(props.inputsProps ?? [])[i]}
+		>
+			<option disabled selected>{props.placeholders[i]}</option>
+			{props.options?.[i]?.map(o => <option value={o.value}>{o.name}</option>)}
+		</select> : <input
+			type={t}
+			id={id}
+			name={props.names[i]}
+			title={props.placeholders[i]}
+			placeholder={props.placeholders[i]}
+			{...(props.inputsProps ?? [])[i]}
+		/>))}
+	</div>}
+</div>
 <p>{info ?? <slot name="info" />}</p>
 
 <style lang="scss">
 	label {
+		display: block;
 		color: #72767d;
 		font-size: 9pt;
 		font-weight: bold;
@@ -44,6 +87,7 @@ const { label, placeholder, info, type, id, inputProps } = Astro.props;
 		font-family: inherit;
 		font-size: 12pt;
 		text-overflow: ellipsis;
+		height: 3em;
 
 		&:disabled {
 			background-color: #fcfcfd;
@@ -59,19 +103,25 @@ const { label, placeholder, info, type, id, inputProps } = Astro.props;
 	select {
 		cursor: pointer;
 	}
-	:has(select + input) {
+	.columns {
 		display: flex;
 
-		select {
+		:not(:last-child) {
 			border-top-right-radius: 0;
 			border-bottom-right-radius: 0;
 			border-right: 0;
 		}
 
-		input {
+		:not(:first-child) {
 			border-top-left-radius: 0;
 			border-bottom-left-radius: 0;
 		}
+	}
+
+	.rows {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
 	}
 	p {
 		margin: 0;

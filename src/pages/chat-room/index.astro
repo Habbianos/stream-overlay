@@ -1,4 +1,5 @@
 ---
+import ColumnFields from "@/components/OptionsLayout/ColumnFields.astro";
 import Field from "@/components/OptionsLayout/Field.astro";
 import Navbar from "@/components/OptionsLayout/Navbar.astro";
 import NavbarLink from "@/components/OptionsLayout/Navbar_Link.astro";
@@ -6,7 +7,8 @@ import NavbarSep from "@/components/OptionsLayout/Navbar_Sep.astro";
 import NavbarTitle from "@/components/OptionsLayout/Navbar_Title.astro";
 import Note from "@/components/OptionsLayout/Note.astro";
 import Section from "@/components/OptionsLayout/Section.astro";
-import RootLayout from "@/layouts/RootLayout.astro";
+import Separator from "@/components/OptionsLayout/Separator.astro";
+import OptionsLayout from "@/layouts/OptionsLayout.astro";
 import type { ChatHistoryOptions } from "@/services/chatHistory";
 import type { PubsubOptions } from "@/services/pubsub";
 import type { RoomVisOptions } from "@/services/roomVisualization";
@@ -20,8 +22,8 @@ export type ChatRoomOptions = PubsubOptions &
 	};
 ---
 
-<RootLayout title="Options - Chat Room">
-	<Navbar>
+<OptionsLayout overlayName="Chat Room">
+	<Navbar slot="aside">
 		<NavbarTitle name="Chat Room Overlay" />
 		<NavbarLink name="Livestream" link="#livestream" />
 		<NavbarLink name="Rewards" link="#rewards" />
@@ -32,207 +34,76 @@ export type ChatRoomOptions = PubsubOptions &
 		<NavbarLink name="Preview" link="#preview" />
 	</Navbar>
 
-	<main>
-		<Section
-			id="livestream"
-			title="Livestream Info"
-			info="Required details to watch your livestream chat in real time"
+	<Section
+		id="livestream"
+		title="Livestream Info"
+		info="Required details to watch your livestream chat in real time"
+	>
+		<Field
+			label="Display name"
+			placeholder="Your Twitch user name"
+			type="text"
+			id="userName"
+			name="userName"
+		/>
+		<Field
+			label="Streammer ID"
+			placeholder="Your Twitch user ID"
+			type="text"
+			id="userId"
+			name="userId"
 		>
-			<Field
-				label="Display name"
-				placeholder="Your Twitch user name"
-				type="text"
-				id="userName"
-			/>
-			<Field
-				label="Streammer ID"
-				placeholder="Your Twitch user ID"
-				type="text"
-				id="userId"
-			>
-				<Fragment slot="info">
-					You can get your ID <a
-						href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/"
-						target="_blank">here</a
-					>, it doesn't need to sign-in
-				</Fragment>
-			</Field>
-		</Section>
+			<Fragment slot="info">
+				You can get your ID <a
+					href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/"
+					target="_blank">here</a
+				>, it doesn't need to sign-in
+			</Fragment>
+		</Field>
+	</Section>
 
-		<hr />
+	<Separator />
 
-		<Section
-			id="rewards"
-			title="Available Rewards"
-			info="Configure which rewards triggers actions in your overlay"
-		>
-			<Note
-				info="Remmember that you can configure the reward to skip the queue, as we won't confirm the claim in your behalfe. The overley will only capture claims while the page is open."
-			/>
-		</Section>
+	<Section
+		id="rewards"
+		title="Available Rewards"
+		info="Configure which rewards triggers actions in your overlay"
+	>
+		<ColumnFields allowMultiple>
+			<div>
+				<Field
+					label="Reward name"
+					placeholder="Enter the exact reward name you have"
+					type="text"
+					id="rewardName"
+					name="rewardName"
+					info="If you enter the same reward multiple times, one will be picked randomly"
+				/>
+			</div>
+			<div>
+				<Field
+					label="Action"
+					placeholders={["Select one action", "Predefined value"]}
+					types={["select", "text"]}
+					id="rewardName"
+					names={["actionType", "actionValue"]}
+					options={[
+						[
+							{ name: "Clothes", value: "clothing" },
+							{ name: "Bubble stlye", value: "bubble" },
+							{ name: "Effect", value: "fx" },
+						],
+					]}
+					info="If you don't fill a prefedined value, remember to enable viewers to fill it in when claiming the reward"
+				/>
+			</div>
+		</ColumnFields>
+		<Note
+			info="Remmember that you can configure the reward to skip the queue, as we won't confirm the claim in your behalfe. The overley will only capture claims while the page is open."
+		/>
+	</Section>
+</OptionsLayout>
 
-		<hr />
-
-		<section id="config_count">
-			<article>
-				<form id="fm_time">
-					<label for="#ipt_time_2_end">Reward name</label>
-					<div class="mesclar">
-						<input
-							type="text"
-							id="ipt_time_2_end"
-							title="Enter the exact reward name you have"
-							placeholder="Enter the exact reward name you have"
-						/>
-					</div>
-					<p>
-						If you enter the same reward multiple times, one will be
-						picked randomly
-					</p>
-				</form>
-				<form id="fm_add_time">
-					<label for="#ipt_time_2_add">Action</label>
-					<div class="mesclar">
-						<select>
-							<option value="fx">Effect</option>
-						</select>
-						<input
-							type="text"
-							id="ipt_time_2_add"
-							title="Predefined value"
-							placeholder="Predefined value"
-						/>
-					</div>
-					<p>
-						If you don't fill a prefedined value, remember to enable
-						viewers to fill it in when claiming the reward
-					</p>
-				</form>
-			</article>
-		</section>
-	</main>
-</RootLayout>
-
-<style lang="scss">
-	body {
-		--nav_w: 200px;
-		--left_bg_color: #f3f3f3;
-		--right_bg_color: #fff;
-		font-family: "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
-			"Helvetica Neue", sans-serif;
-		background-image: linear-gradient(
-			to right,
-			var(--left_bg_color) 50%,
-			var(--right_bg_color) 50%
-		);
-		min-height: 100vh;
-		display: flex;
-		max-width: min(70%, 1080px);
-		margin: 0 auto;
-	}
-
-	main {
-		padding: 40px 0 50vh 40px;
-		background-color: var(--right_bg_color);
-		flex: 1;
-	}
-	/* header >  */
-	p {
-		margin: 5px 0 0;
-		font-size: 8pt;
-		color: #b4b6b9;
-	}
-	#config_count article {
-		display: flex;
-		flex-direction: row;
-		// margin: 0 -5px;
-		gap: 5px;
-	}
-	#config_count form {
-		flex-basis: 0;
-		flex-grow: 1;
-		// margin: 0 5px;
-	}
-	form label {
-		color: #72767d;
-		font-size: 9pt;
-		font-weight: bold;
-		text-transform: uppercase;
-		margin: 17px 0 9px;
-	}
-	form input,
-	form button,
-	form select {
-		outline: none;
-		width: 100%;
-		padding: 13px;
-		border: solid 1px #c7c9cb;
-		border-radius: 3px;
-		background-color: #fbfbfb;
-		box-sizing: border-box;
-		font-family: inherit;
-		font-size: 12pt;
-		text-overflow: ellipsis;
-		height: 49px;
-	}
-	form select {
-		cursor: pointer;
-	}
-	form :has(select + input) {
-		display: flex;
-
-		select {
-			border-top-right-radius: 0;
-			border-bottom-right-radius: 0;
-			border-right: 0;
-		}
-
-		input {
-			border-top-left-radius: 0;
-			border-bottom-left-radius: 0;
-		}
-	}
-
-	input[type="submit"],
-	form button {
-		background-color: #edeef1 !important;
-		border: 0 !important;
-		color: #7f8993;
-		cursor: pointer;
-	}
-	form input:disabled,
-	form select:disabled {
-		background-color: #fcfcfd;
-		border-color: #eaeaea;
-		cursor: not-allowed;
-	}
-	form input:active,
-	form input:focus,
-	form select:active,
-	form select:focus {
-		border-color: #7289da;
-	}
-	form input[type="time"] {
-		padding-right: 100px;
-		height: 49px;
-	}
-	form div.mesclar {
-		position: relative;
-	}
-	form div.mesclar input ~ input[type="submit"],
-	form div.mesclar input ~ button {
-		position: absolute;
-		right: 0;
-		top: 0;
-		width: fit-content;
-		margin: 5px;
-		padding: 9px;
-	}
-
-	hr {
-		margin: 30px 0;
-	}
-</style>
 
 <script>
 	type Reward = {

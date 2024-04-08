@@ -1,8 +1,41 @@
 ---
 import RootLayout from "./RootLayout.astro";
 
+interface Props {
+	overlayName: string;
+}
+
 const { overlayName } = Astro.props
 ---
 <RootLayout title={`Options - ${overlayName}`}>
+	<slot name="aside" />
 
+	<main><slot /></main>
 </RootLayout>
+
+<style lang="scss">
+	body {
+		--nav_w: 200px;
+		--left_bg_color: #f3f3f3;
+		--right_bg_color: #fff;
+		font-family: "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans",
+			"Helvetica Neue", sans-serif;
+		background-image: linear-gradient(
+			to right,
+			var(--left_bg_color) 50%,
+			var(--right_bg_color) 50%
+		);
+		min-height: 100vh;
+		display: flex;
+		padding: 0 40px;
+		max-width: 1080px;
+		margin: 0 auto;
+	}
+
+	main {
+		padding: 40px 0 50vh 40px;
+		background-color: var(--right_bg_color);
+		flex: 1;
+	}
+
+</style>
