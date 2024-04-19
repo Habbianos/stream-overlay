@@ -2,19 +2,13 @@
 import RootLayout from "@/layouts/RootLayout.astro";
 ---
 
-<RootLayout title="Chat Room Overlay">
-	<div id="chat-container"></div>
-
-	<!--<iframe src="http://localhost:8081/index.html" width="1920" height="500"></iframe>-->
+<RootLayout title="Chat Overlay">
 	<canvas id="room-container"></canvas>
 </RootLayout>
 
 <script>
 	import parseQuery from "@/utils/parseQuery";
 	import type { ChatRoomOptions } from "./index.astro";
-	import initTmi from "@/services/tmi";
-	import initPubsub from "@/services/pubsub.ts";
-	import initChatHistory from "@/services/chatHistory";
 	import initRoomVis from "@/services/roomVisualization";
 	import { HOSTS } from "@/services/habboAPI";
 	import { setBubbleStyle, setLook } from "@/services/db"
@@ -22,17 +16,6 @@ import RootLayout from "@/layouts/RootLayout.astro";
 	const params = parseQuery() as ChatRoomOptions;
 
 	console.log('Received options:', params)
-
-	if (!params.userId || !params.userName) {
-		const message = "User name and user id are required."
-		window.alert(message)
-		throw new Error(message)
-	}
-
-	const chatContainer = document.querySelector(
-		"#chat-container",
-	) as HTMLElement;
-	const { createChatMessage } = initChatHistory(params, chatContainer);
 
 	const roomContainer = document.querySelector(
 		"#room-container",
@@ -72,36 +55,29 @@ import RootLayout from "@/layouts/RootLayout.astro";
 		}
 	} as { [action: string]: (user: string, message: string) => void }
 
-	initTmi(params, {
-		onChatMessage(username, message) {
-			createChatMessage(username, message);
-			updateAvatar(username)
-		},
-	});
+	// initPubsub(params, {
+	// 	onRewardRedeemed(user, reward, message) {
+	// 		const actionName = Object.keys(ACTIONS).find(
+	// 			a => 
+	// 				params[a as keyof ChatRoomOptions] === reward || 
+	// 				(a.includes(":") && 
+	// 					Object.keys(params).find(p => a.split(":")[0] === p.split(":")[0] && params[p as keyof ChatRoomOptions] === reward)),
+	// 		);
 
-	initPubsub(params, {
-		onRewardRedeemed(user, reward, message) {
-			const actionName = Object.keys(ACTIONS).find(
-				a => 
-					params[a as keyof ChatRoomOptions] === reward || 
-					(a.includes(":") && 
-						Object.keys(params).find(p => a.split(":")[0] === p.split(":")[0] && params[p as keyof ChatRoomOptions] === reward)),
-			);
+	// 		if (actionName && typeof ACTIONS[actionName] === "function") {
+	// 			if (actionName.includes(":")) {
+	// 				const value = Object
+	// 					.keys(params)
+	// 					.find(p => params[p as keyof ChatRoomOptions] === reward)!
+	// 					.split(":")[1]
 
-			if (actionName && typeof ACTIONS[actionName] === "function") {
-				if (actionName.includes(":")) {
-					const value = Object
-						.keys(params)
-						.find(p => params[p as keyof ChatRoomOptions] === reward)!
-						.split(":")[1]
-
-					ACTIONS[actionName](user, value)
-				} else {
-					ACTIONS[actionName](user, message);
-				}
-			}
-		},
-	});
+	// 				ACTIONS[actionName](user, value)
+	// 			} else {
+	// 				ACTIONS[actionName](user, message);
+	// 			}
+	// 		}
+	// 	},
+	// });
 </script>
 
 <style lang="scss">
@@ -112,156 +88,5 @@ import RootLayout from "@/layouts/RootLayout.astro";
 
 	* {
 		image-rendering: pixelated;
-	}
-
-	@font-face {
-		font-family: Habbo Ubuntu Condensed;
-		src: url("https://alynva.surge.sh/fonts/11_class_49_Ubuntu.otf");
-	}
-
-	:root {
-		--scale: 2;
-	}
-
-	iframe {
-		position: absolute;
-		bottom: 0;
-		border: 0;
-	}
-
-	#chat-container {
-		height: 380px;
-		width: 100%;
-		position: relative;
-	}
-
-	.emote {
-		width: calc(20px * var(--scale));
-		vertical-align: middle;
-	}
-
-	.message {
-		width: fit-content;
-		max-width: calc(300px * var(--scale, 1));
-		font-family: Habbo Ubuntu Condensed;
-		font-size: calc(12pt * var(--scale, 1));
-		position: absolute;
-		left: 50%;
-		transform: translateX(-50%);
-		transition: top 0.4s;
-	}
-
-	.message {
-		border-image-source: var(--base);
-
-		--top: var(--sliceXY1);
-		--right: calc(var(--baseW) - var(--sliceWH0) - var(--sliceXY0));
-		--bottom: calc(var(--baseH) - var(--sliceWH1) - var(--sliceXY1));
-		--left: var(--sliceXY0);
-
-		color: var(--textColorRGB);
-
-		border-image-slice: var(--top) var(--right) var(--bottom) var(--left)
-			fill;
-		border-image-width: calc(var(--top) * 1px * var(--scale))
-			calc(var(--right) * 1px * var(--scale))
-			calc(var(--bottom) * 1px * var(--scale))
-			calc(var(--left) * 1px * var(--scale));
-		border-image-outset: calc(var(--textFieldMargins1) * 1px * var(--scale))
-			calc(var(--textFieldMargins2) * 1px * var(--scale))
-			calc(var(--textFieldMargins3) * 1px * var(--scale))
-			calc(var(--textFieldMargins0) * 1px * var(--scale));
-		border-image-repeat: repeat;
-
-		margin-top: calc(var(--textFieldMargins1) * 1px * var(--scale));
-		margin-bottom: calc(var(--textFieldMargins3) * 1px * var(--scale));
-	}
-
-	.message:after {
-		content: "";
-		background-image: var(--pointer);
-		background-size: contain;
-		width: calc(var(--pointerW) * 1px * var(--scale));
-		height: calc(var(--pointerH) * 1px * var(--scale));
-
-		position: absolute;
-
-		bottom: calc(
-			var(--textFieldMargins3) * -1px * var(--scale) + var(--pointerH) *
-				-1px * var(--scale) + 3px
-		);
-		left: clamp(0px, calc(100% - 10px), calc(50% + 0px));
-	}
-
-	.message:before {
-		content: "";
-		background-image: var(--icon);
-		background-size: contain;
-		width: calc(var(--iconW) * 1px * var(--scale));
-		height: calc(var(--iconH) * 1px * var(--scale));
-
-		position: absolute;
-
-		left: calc(
-			var(--faceXY0) * 1px * var(--scale) - var(--textFieldMargins0) * 1px *
-				var(--scale) - 8px * var(--scale)
-		);
-		top: calc(
-			var(--faceXY1) * 1px * var(--scale) - var(--textFieldMargins1) * 1px *
-				var(--scale) - 9px * var(--scale)
-		);
-	}
-
-	.message .color {
-		border-image-source: var(--bubbleColor);
-
-		--top: var(--sliceXY1);
-		--right: 0;
-		--bottom: calc(var(--baseH) - var(--sliceWH1) - var(--sliceXY1));
-		--left: var(--sliceXY0);
-		border-image-slice: var(--top) var(--right) var(--bottom) var(--left)
-			fill;
-		// calc(var(--top) * 1px * var(--scale)) calc(var(--right) * 1px * var(--scale)) calc(var(--bottom) * 1px * var(--scale)) calc(var(--left) * 1px * var(--scale));
-		border-image-repeat: repeat;
-
-		width: calc(var(--bubbleColorW) * 1px * var(--scale));
-		height: calc(
-			100% + var(--textFieldMargins1) * 1px * var(--scale) +
-				var(--textFieldMargins3) * 1px * var(--scale)
-		);
-
-		position: absolute;
-
-		left: calc(var(--textFieldMargins0) * -1px * var(--scale));
-		top: calc(var(--textFieldMargins1) * -1px * var(--scale));
-	}
-
-	.message .user {
-		text-indent: -10000px;
-		--sourceW: 54px;
-		--sourceH: 62px;
-
-		--scaledW: calc(var(--sourceW) / 2);
-		--scaledH: calc(var(--sourceH) / 2);
-
-		display: var(--userDisplay);
-
-		width: calc(var(--scaledW) * var(--scale));
-		height: calc(var(--scaledH) * var(--scale));
-		position: absolute;
-
-		left: calc(
-			var(--faceXY0) * 1px * var(--scale) - var(--textFieldMargins0) * 1px *
-				var(--scale) - 12px * var(--scale)
-		);
-		top: calc(
-			var(--faceXY1) * 1px * var(--scale) - var(--textFieldMargins1) * 1px *
-				var(--scale) - 12px * var(--scale)
-		);
-	}
-
-	.message .nick,
-	.message b {
-		font-weight: bold;
 	}
 </style>

@@ -1,5 +1,4 @@
 ---
-import ColumnFields from "@/components/OptionsLayout/ColumnFields.astro";
 import Field from "@/components/OptionsLayout/Field.astro";
 import Navbar from "@/components/OptionsLayout/Navbar.astro";
 import NavbarLink from "@/components/OptionsLayout/Navbar_Link.astro";
@@ -23,21 +22,20 @@ export type ChatRoomOptions = PubsubOptions &
 	};
 ---
 
-<OptionsLayout widgetName="Twitch API" overlayUrl={import.meta.env.BASE_URL + "/twitch-api/overlay"}>
+<OptionsLayout widgetName="Room" overlayUrl={import.meta.env.BASE_URL + "/room/overlay"}>
 	<Navbar slot="aside">
-		<NavbarTitle name="Twitch API Widget" />
-		<NavbarLink name="Livestream" link="#livestream" />
-		<NavbarLink name="Rewards" link="#rewards" />
-		<NavbarLink name="Data Source" link="#data" />
+		<NavbarTitle name="Room Widget" />
+		<NavbarLink name="Chat Layer" link="#chat" />
+		<NavbarLink name="Data Layer" link="#data" />
 		<NavbarSep />
 		<NavbarTitle name="Result" />
 		<NavbarLink name="Preview" link="#preview" />
 	</Navbar>
 
 	<Section
-		id="livestream"
-		title="Livestream Info"
-		info="Required details to watch your livestream chat in real time"
+		id="chat"
+		title="Chat Layer"
+		info=""
 	>
 		<Field
 			label="Display name"
@@ -60,62 +58,6 @@ export type ChatRoomOptions = PubsubOptions &
 				>, it doesn't need to sign-in
 			</Fragment>
 		</Field>
-	</Section>
-
-	<Separator />
-
-	<Section
-		id="rewards"
-		title="Available Rewards"
-		info="Configure which rewards triggers actions in your overlay"
-	>
-		<ColumnFields allowMultiple>
-			<div>
-				<Field
-					label="Reward name"
-					placeholder="Enter the exact reward name you have"
-					type="text"
-					id="rewardName"
-					name="rewardName[]"
-					info="If you enter the same reward multiple times, one will be picked randomly"
-				/>
-			</div>
-			<div>
-				<Field
-					label="Action"
-					placeholders={["Select one action", "Predefined value"]}
-					types={["select", "text"]}
-					id="rewardName"
-					names={["actionType[]", "actionValue[]"]}
-					optgroup={[[{
-						label: "Room Widget",
-						options: [
-							{ name: "Clothes", value: "clothing" },
-							{ name: "Effect", value: "fx" },
-						],
-					}, {
-						label: "Chat Widget",
-						options: [
-							{ name: "Bubble stlye", value: "bubble" },
-						],
-					}]]}
-					info="If you don't fill a prefedined value, remember to enable viewers to fill it in when claiming the reward"
-				/>
-			</div>
-		</ColumnFields>
-		<Field
-			label="Only followes"
-			placeholder="Require the user to follow your channel"
-			type="checkbox"
-			id="onlyFollowers"
-			name="onlyFollowers"
-			info="Require the user to follow your channel"
-		/>
-		<Note>
-			<Fragment slot="info">
-				Remmember that you can configure the Twitch reward to skip the queue, as we won't confirm the claim in your behalfe. <u>The overley will only capture claims while the page is open.</u>
-			</Fragment>
-		</Note>
 	</Section>
 
 	<Separator />
@@ -181,7 +123,7 @@ export type ChatRoomOptions = PubsubOptions &
 		rewards: Reward[];
 	};
 
-	window.overlayURL = import.meta.env.BASE_URL + "/twitch-api/overlay"
+	window.overlayURL = import.meta.env.BASE_URL + "/room/overlay"
 
 	const INITIAL_OPTIONS = {
 		userName: "alynva",
