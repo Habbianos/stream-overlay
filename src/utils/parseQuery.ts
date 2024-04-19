@@ -8,7 +8,7 @@ export default function parseQuery(allowMultiple = false) {
 		const pair = pairs[i].split('=');
 		const lastValue = query[decodeURIComponent(pair[0])]
 		const rawValue = decodeURIComponent((pair[1] || '').replace(/\+/g, " "))
-		const newValue = Number.isNaN(+rawValue) ? rawValue : +rawValue
+		const newValue = rawValue === "" || Number.isNaN(+rawValue) ? rawValue : +rawValue
 		query[decodeURIComponent(pair[0])] = 
 			allowMultiple ?
 				typeof lastValue === 'undefined' ?

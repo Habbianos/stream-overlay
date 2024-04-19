@@ -1,0 +1,303 @@
+---
+import ColumnFields from "@/components/OptionsLayout/ColumnFields.astro";
+import Field from "@/components/OptionsLayout/Field.astro";
+import Navbar from "@/components/OptionsLayout/Navbar.astro";
+import NavbarLink from "@/components/OptionsLayout/Navbar_Link.astro";
+import NavbarSep from "@/components/OptionsLayout/Navbar_Sep.astro";
+import NavbarTitle from "@/components/OptionsLayout/Navbar_Title.astro";
+import Note from "@/components/OptionsLayout/Note.astro";
+import Section from "@/components/OptionsLayout/Section.astro";
+import Separator from "@/components/OptionsLayout/Separator.astro";
+import OptionsLayout from "@/layouts/OptionsLayout.astro";
+import type { ChatHistoryOptions } from "@/services/chatHistory";
+import type { PubsubOptions } from "@/services/pubsub";
+import type { RoomVisOptions } from "@/services/roomVisualization";
+import type { TmiOptions } from "@/services/tmi";
+
+export type ChatRoomOptions = PubsubOptions &
+	TmiOptions &
+	ChatHistoryOptions &
+	RoomVisOptions & {
+		rewards: { trigger: string, action: string, value?: string }[]
+		onlyFollowers?: boolean;
+	};
+---
+
+<OptionsLayout widgetName="Twitch API" overlayUrl={import.meta.env.BASE_URL + "/"}>
+	<Navbar slot="aside">
+		<NavbarTitle name="Twitch API Widget" />
+		<NavbarLink name="Livestream" link="#livestream" />
+		<NavbarLink name="Rewards" link="#rewards" />
+		<NavbarLink name="Data Source" link="#data" />
+		<NavbarSep />
+		<NavbarTitle name="Result" />
+		<NavbarLink name="Preview" link="#preview" />
+	</Navbar>
+
+	<Section
+		id="livestream"
+		title="Livestream Info"
+		info="Required details to watch your livestream chat in real time"
+	>
+		<Field
+			label="Display name"
+			placeholder="Your Twitch user name"
+			type="text"
+			id="userName"
+			name="userName"
+		/>
+		<Field
+			label="Streammer ID"
+			placeholder="Your Twitch user ID"
+			type="text"
+			id="userId"
+			name="userId"
+		>
+			<Fragment slot="info">
+				You can get your ID <a
+					href="https://www.streamweasels.com/tools/convert-twitch-username-to-user-id/"
+					target="_blank">here</a
+				>, it doesn't need to sign-in
+			</Fragment>
+		</Field>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="rewards"
+		title="Available Rewards"
+		info="Configure which rewards triggers actions in your overlay"
+	>
+		<ColumnFields allowMultiple>
+			<div>
+				<Field
+					label="Reward name"
+					placeholder="Enter the exact reward name you have"
+					type="text"
+					id="rewardName"
+					name="rewardName[]"
+					info="If you enter the same reward multiple times, one will be picked randomly"
+				/>
+			</div>
+			<div>
+				<Field
+					label="Action"
+					placeholders={["Select one action", "Predefined value"]}
+					types={["select", "text"]}
+					id="rewardName"
+					names={["actionType[]", "actionValue[]"]}
+					optgroup={[[{
+						label: "Room Widget",
+						options: [
+							{ name: "Clothes", value: "clothing" },
+							{ name: "Bubble stlye", value: "bubble" },
+							{ name: "Effect", value: "fx" },
+						],
+					}]]}
+					info="If you don't fill a prefedined value, remember to enable viewers to fill it in when claiming the reward"
+				/>
+			</div>
+		</ColumnFields>
+		<Field
+			label="Only followes"
+			placeholder="Require the user to follow your channel"
+			type="checkbox"
+			id="onlyFollowers"
+			name="onlyFollowers"
+			info="Require the user to follow your channel"
+		/>
+		<Note
+			info="Remmember that you can configure the reward to skip the queue, as we won't confirm the claim in your behalfe. The overley will only capture claims while the page is open."
+		/>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="data"
+		title="Data Layer"
+		info="Choose how the your data will be saved"
+	>
+		<Field
+			label="Storage"
+			info="Storage destination"
+			type="radioImage"
+			options={[
+				{ name: "Local Storage", value: import.meta.env.BASE_URL + "/icons/local_storage.png" },
+				{ name: "Cloud Sync (not availabled)", value: import.meta.env.BASE_URL + "/icons/cloud_sync.png", disabled: true },
+			]}
+			id="storageOption"
+			name="storageOption"
+		/>
+		
+		<Note>
+			<Fragment slot="info">
+				<p>Choosing to use <strong>local storage</strong> means that your data will be stored in the browser where the widgets are opened, and the configurations from this website will be present in the widget URL. To change the configuration you'll have to change the URL of the widget.</p>
+				<p>Choosing to use <strong>cloud sync</strong> means that you will receive a new storage ID to keep your data saved in the cloud, beeing able to reuse it in any browser, at any time. Keep in mind that this ID should be private. Cloud sync is powered by Firebase Firestore.</p>
+			</Fragment>
+		</Note>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="preview"
+		title="Preview the Result"
+	>
+		<Field
+			label="Widget URL"
+			placeholder="Use this URL in your stream"
+			type="text"
+			id="url"
+			name="url"
+			inputProps={{
+				readonly: true,
+				disabled: true,
+			}}
+		/>
+		<Note info="This widget does not render anything by default, it only process data from Twitch. Only while loading and if unexpected errors occour, the message will be shown." />
+		<iframe />
+	</Section>
+</OptionsLayout>
+
+
+<script>
+	type Reward = {
+		trigger: string;
+		action: string;
+	};
+	type FormOptions = {
+		userName: string;
+		userId: number;
+		rewards: Reward[];
+	};
+
+	window.overlayURL = import.meta.env.BASE_URL + "/twitch-api/overlay"
+
+	const INITIAL_OPTIONS = {
+		userName: "alynva",
+		userId: 155285216,
+		rewards: [
+			{ trigger: "Visual", action: "visual" },
+			{ trigger: "Estilo", action: "estilo" },
+			{ trigger: "Efeito", action: "efeito" },
+			{ trigger: "Car Doggy", action: "efeito:48" },
+			{ trigger: "Hap-Hop", action: "efeito:dance.1" },
+			{ trigger: "Pogo Mogo", action: "efeito:dance.2" },
+			{ trigger: "Duck Funk", action: "efeito:dance.3" },
+			{ trigger: "Rollie", action: "efeito:dance.4" },
+			{ trigger: "Dragon", action: "efeito:100" },
+		],
+	} as FormOptions;
+	function init() {
+		const form = document.querySelector("form")!;
+		form.addEventListener("submit", (evt) => {
+			evt.preventDefault();
+			// update();
+		});
+		// form.addEventListener("change", update);
+		// form.appendChild(buildFields(INITIAL_OPTIONS, "options"));
+	}
+	function buildFields(data: any, name: string) {
+		const field = document.createElement("fieldset");
+		if (name) {
+			const legend = document.createElement("legend");
+			legend.innerText = name;
+			field.appendChild(legend);
+		}
+
+		if (Array.isArray(data)) {
+			const input = document.createElement("input");
+			input.type = "hidden";
+			input.name = name;
+			field.appendChild(input);
+			for (const d of data) {
+				field.appendChild(buildFields(d, ""));
+			}
+		} else {
+			for (const prop in data) {
+				if (["string", "number"].includes(typeof data[prop])) {
+					const label = document.createElement("label");
+					label.innerText = prop;
+					field.appendChild(label);
+
+					const input = document.createElement("input");
+					input.type =
+						typeof data[prop] === "number" ? "number" : "text";
+					input.value = data[prop];
+					input.name = prop;
+					label.appendChild(input);
+				} else {
+					field.appendChild(buildFields(data[prop], prop));
+				}
+			}
+		}
+		return field;
+	}
+
+	function getCurrentData() {
+		const obj = {} as FormOptions;
+		const rewards = [] as Reward[];
+
+		// Extracting userName and userId
+		const userNameInput = document.querySelector(
+			'input[name="userName"]'
+		) as HTMLInputElement;
+		const userIdInput = document.querySelector(
+			'input[name="userId"]'
+		) as HTMLInputElement;
+		obj.userName = userNameInput.value.trim();
+		obj.userId = parseInt(userIdInput.value.trim());
+
+		// Extracting rewards
+		const rewardFieldsets = document.querySelectorAll(
+			"fieldset:has(input[type=hidden]) fieldset"
+		);
+		rewardFieldsets.forEach((fieldset) => {
+			const triggerInput = fieldset.querySelector(
+				'input[name="trigger"]'
+			) as HTMLInputElement;
+			const actionInput = fieldset.querySelector(
+				'input[name="action"]'
+			) as HTMLInputElement;
+			rewards.push({
+				trigger: triggerInput.value.trim(),
+				action: actionInput.value.trim(),
+			});
+		});
+
+		obj.rewards = rewards;
+
+		return obj;
+	}
+	function update() {
+		const data = getCurrentData();
+		const params = new URLSearchParams();
+		params.set("userName", data.userName);
+		params.set("userId", data.userId + "");
+		for (const reward of data.rewards) {
+			params.set(reward.action, reward.trigger);
+		}
+
+		const url =
+			window.location.origin +
+			import.meta.env.BASE_URL +
+			"/chat-room/overlay?" +
+			params.toString();
+		// document.querySelector("iframe")!.src = url;
+		// document.querySelector("pre code")!.innerHTML = url;
+	}
+
+	init();
+	update();
+</script>
+
+<style>
+	iframe {
+		border: none;
+		width: 100%;
+		height: 600px;
+		box-shadow: 1px 1px 3px #8e8e8e;
+	}
+</style>

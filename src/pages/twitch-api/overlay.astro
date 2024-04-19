@@ -1,0 +1,40 @@
+---
+import RootLayout from "@/layouts/RootLayout.astro";
+---
+<RootLayout title="Twitch API Widget">
+	loading...
+</RootLayout>
+
+<script>
+	import parseQuery from "@/utils/parseQuery";
+	import type { ChatRoomOptions } from "./index.astro";
+	import initTmi from "@/services/tmi";
+	import initPubsub from "@/services/pubsub.ts";
+
+	try {
+		const params = parseQuery(true) as ChatRoomOptions;
+
+		console.log('Received options:', params)
+
+		if (!params.userId || !params.userName) {
+			const message = "User name and user id are required."
+			// window.alert(message)
+			throw new Error(message)
+		}
+
+		initTmi(params, {
+			onChatMessage(username, message) {
+			},
+		});
+
+		initPubsub(params, {
+			onRewardRedeemed(user, reward, message) {
+			},
+		});
+
+		document.body.innerText = ""
+	} catch(err) {
+		document.body.innerText = err
+	}
+</script>
+

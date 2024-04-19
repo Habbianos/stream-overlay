@@ -33,6 +33,8 @@ const { allowMultiple } = Astro.props
 			const sources = this.querySelectorAll<HTMLElement>(".columns")
 			for (const source of sources) {
 				source.classList.add("source")
+				source.querySelectorAll<HTMLInputElement>("input").forEach(elem => elem.disabled = true)
+				source.querySelectorAll<HTMLInputElement>("option").forEach(elem => elem.disabled = true)
 			}
 			this.makeCopy(sources)
 
@@ -43,16 +45,20 @@ const { allowMultiple } = Astro.props
 				clone.classList.remove("source")
 				source.parentElement?.appendChild(clone)
 	
-				clone.querySelectorAll<HTMLInputElement>("input").forEach(elem => elem.addEventListener("change", () => {
-					let rows = Array.from(this.querySelectorAll<HTMLElement>(".rows"))
-						.map(r => Array.from(r.querySelectorAll<HTMLInputElement>("input")))
-					rows = rows[0].map((_, i) => rows.map(r => r[i]))
-					rows.forEach((r, i) => {
-						if (r.some(e => e.closest(".columns")?.classList.contains("source"))) return
-						if (i !== rows.length - 1 && r.every(e => !e.value)) r.forEach(e => e.closest(".columns")?.remove())
-						else if (i === rows.length - 1 && r.some(e => e.value)) this.makeCopy(sources)
+				clone.querySelectorAll<HTMLInputElement>("option").forEach(elem => elem.disabled = false)
+				clone.querySelectorAll<HTMLInputElement>("input").forEach(elem => {
+					elem.disabled = false
+					elem.addEventListener("change", () => {
+						let rows = Array.from(this.querySelectorAll<HTMLElement>(".rows"))
+							.map(r => Array.from(r.querySelectorAll<HTMLInputElement>("input")))
+						rows = rows[0].map((_, i) => rows.map(r => r[i]))
+						rows.forEach((r, i) => {
+							if (r.some(e => e.closest(".columns")?.classList.contains("source"))) return
+							if (i !== rows.length - 1 && r.every(e => !e.value)) r.forEach(e => e.closest(".columns")?.remove())
+							else if (i === rows.length - 1 && r.some(e => e.value)) this.makeCopy(sources)
+						})
 					})
-				}))
+				})
 			}
 		}
 		private removeCopy(sources: NodeListOf<HTMLElement>) {

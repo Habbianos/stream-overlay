@@ -6,7 +6,8 @@ type OneField = {
 	name: string;
 	placeholder: string;
 	inputProps?: (HTMLAttributes<"input"> | HTMLAttributes<"select">);
-	options?: { name: string, value: string }[];
+	options?: { name: string, value: string, disabled?: boolean }[];
+	optgroup?: { label: string, options: { name: string, value: string, disabled?: boolean }[] }[];
 };
 
 type MultipleFields = {
@@ -14,7 +15,8 @@ type MultipleFields = {
 	names: string[];
 	placeholders: string[];
 	inputsProps?: (HTMLAttributes<"input"> | HTMLAttributes<"select">)[];
-	options?: { name: string, value: string }[][];
+	options?: { name: string, value: string, disabled?: boolean }[][];
+	optgroup?: { label: string, options: { name: string, value: string, disabled?: boolean }[]}[][];
 };
 
 type Props = {
@@ -33,11 +35,14 @@ const { label, info, id, ...props } = Astro.props;
 		title={props.placeholder}
 		{...props.inputProps}
 	>
-		<option disabled selected>{props.placeholder}</option>
-		{props.options?.map(o => <option value={o.value}>{o.name}</option>)}
+		<option value="" selected>{props.placeholder}</option>
+		{props.options?.map(o => <option value={o.value} disabled={!!o.disabled}>{o.name}</option>)}
+		{props.optgroup?.map(g => <optgroup label={g.label}>
+			{g.options?.map(o => <option value={o.value} disabled={!!o.disabled}>{o.name}</option>)}
+		</optgroup>)}
 	</select> : props.type === 'radioImage' ? <>
 		{props.options?.map((o, i) => <label class:list={["radioImage"]}>
-			<input type="radio" name={props.name} checked={i === 0}>
+			<input type="radio" name={props.name} checked={i === 0} disabled={!!o.disabled}>
 			<img src={o.value} title={o.name} />
 		</label>)}
 	</> : <input
@@ -55,8 +60,11 @@ const { label, info, id, ...props } = Astro.props;
 			title={props.placeholders[i]}
 			{...(props.inputsProps ?? [])[i]}
 		>
-			<option disabled selected>{props.placeholders[i]}</option>
-			{props.options?.[i]?.map(o => <option value={o.value}>{o.name}</option>)}
+			<option value="" selected>{props.placeholders[i]}</option>
+			{props.options?.[i]?.map(o => <option value={o.value} disabled={!!o.disabled}>{o.name}</option>)}
+			{props.optgroup?.[i]?.map(g => <optgroup label={g.label}>
+				{g.options?.map(o => <option value={o.value} disabled={!!o.disabled}>{o.name}</option>)}
+			</optgroup>)}
 		</select> : t === 'radioImage' ? <></> :<input
 			type={t}
 			id={id}
@@ -88,6 +96,9 @@ const { label, info, id, ...props } = Astro.props;
 		
 		&:has(input:checked) {
 			border-color: #7289da;
+		}
+		&:has(input:disabled) {
+			filter: contrast(0.3);
 		}
 		input[type=radio] {
 			display: none;

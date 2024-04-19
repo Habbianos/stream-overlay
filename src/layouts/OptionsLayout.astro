@@ -2,16 +2,44 @@
 import RootLayout from "./RootLayout.astro";
 
 interface Props {
-	overlayName: string;
+	widgetName: string;
+	overlayUrl: string;
 }
 
-const { overlayName } = Astro.props
+const { widgetName, overlayUrl } = Astro.props
 ---
-<RootLayout title={`Options - ${overlayName}`}>
+<RootLayout title={`Options - ${widgetName}`}>
 	<slot name="aside" />
 
-	<main><slot /></main>
+	<main>
+		<form><slot /></form>
+	</main>
 </RootLayout>
+
+<script>
+	function formDataToJson(f: FormData) {console.log(f)
+		return Object.fromEntries(Array.from(f.keys(), k =>
+			k.endsWith('[]') ? [k.slice(0, -2), f.getAll(k)] : [k, f.get(k)]));
+	}
+	function init() {
+		const form = document.querySelector("form")!;
+		form.addEventListener("submit", (evt) => {
+			evt.preventDefault();
+		});
+		form.addEventListener("change", update);
+		update();
+	}
+	init()
+	function update() {
+		const form = document.querySelector("form")!;
+		const data = new FormData(form)
+		console.log(formDataToJson(data))
+		const query = new URLSearchParams(data).toString()
+		const url = window.location.origin + window.overlayURL + "?" + query
+		form.url.value = url
+		form.querySelector("iframe")!.src = url
+	}
+</script>
 
 <style lang="scss">
 	body {

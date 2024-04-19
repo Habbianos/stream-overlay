@@ -13,9 +13,7 @@ const { id, title, info } = Astro.props;
 		<h1>{title}</h1>
 		<p>{info ?? <slot name="info" />}</p>
 	</header>
-	<form>
-		<slot />
-	</form>
+	<slot />
 </section>
 
 <style lang="scss">
