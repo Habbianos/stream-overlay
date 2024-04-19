@@ -1,0 +1,1 @@
+function p(c=!1){const i=window.location.search.substring(1),o={},a=i.split("&");for(let t=0;t<a.length;t++){const r=a[t].split("="),e=o[decodeURIComponent(r[0])],n=decodeURIComponent((r[1]||"").replace(/\+/g," ")),s=n===""||Number.isNaN(+n)?n:+n;o[decodeURIComponent(r[0])]=c?typeof e>"u"?s:[...Array.isArray(e)?e:[e],s]:s}return o}export{p};
