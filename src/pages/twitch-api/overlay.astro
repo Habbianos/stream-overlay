@@ -24,11 +24,13 @@ import RootLayout from "@/layouts/RootLayout.astro";
 
 		initTmi(params, {
 			onChatMessage(username, message) {
+				console.log({ username, message })
 			},
 		});
 
 		initPubsub(params, {
 			onRewardRedeemed(user, reward, message) {
+				console.log({ user, reward, message })
 			},
 		});
 

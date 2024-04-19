@@ -17,7 +17,7 @@ const { widgetName, overlayUrl } = Astro.props
 </RootLayout>
 
 <script>
-	function formDataToJson(f: FormData) {console.log(f)
+	function formDataToJson(f: FormData) {
 		return Object.fromEntries(Array.from(f.keys(), k =>
 			k.endsWith('[]') ? [k.slice(0, -2), f.getAll(k)] : [k, f.get(k)]));
 	}
@@ -27,17 +27,81 @@ const { widgetName, overlayUrl } = Astro.props
 			evt.preventDefault();
 		});
 		form.addEventListener("change", update);
+		load()
 		update();
 	}
 	init()
-	function update() {
+	function update(evt?: Event) {
+		if (evt?.target?.id === 'url') {
+			loadUrl(evt.target.value)
+			return
+		}
 		const form = document.querySelector("form")!;
 		const data = new FormData(form)
-		console.log(formDataToJson(data))
+		data.delete("url")
+		save(data)
 		const query = new URLSearchParams(data).toString()
 		const url = window.location.origin + window.overlayURL + "?" + query
 		form.url.value = url
 		form.querySelector("iframe")!.src = url
+	}
+	function save(data: FormData) {
+		if (load.loading) return
+		if (!window.overlayURL) return
+		const obj = formDataToJson(data)
+		localStorage.setItem("_cache_"+window.overlayURL, JSON.stringify(obj))
+	}
+	function load() {
+		if (load.loading) return
+		load.loading = true
+		if (!window.overlayURL) return
+		const raw = localStorage.getItem("_cache_"+window.overlayURL)
+		if (!raw) return
+
+		const data = JSON.parse(raw)
+		const form = document.querySelector("form")!;
+
+		for (const prop in data) {
+			if (Array.isArray(data[prop])) {
+				
+				for (const [i, value] of data[prop].entries()) {
+					const elemts = Array.from(form.querySelectorAll(`[name="${prop}[]"]`))
+						.filter(elem => !elem.disabled)
+					const elem = elemts[i]
+
+					switch(elem.type) {
+						case "text":
+							elem.value = value
+							break;
+						case "checkbox":
+							elem.checked = value === 'on'
+							break;
+					}
+					switch(elem.tagName) {
+						case "SELECT":
+							elem.value = value
+					}
+					elem.dispatchEvent(new Event('change'))
+				}
+			} else {
+				const elem = form.querySelector(`[name=${prop}]`)
+				if (!elem) return
+
+				switch(elem.type) {
+					case "text":
+						elem.value = data[prop]
+						break;
+					case "checkbox":
+						elem.checked = data[prop] === 'on'
+						break;
+				}
+			}
+		}
+		load.loading = false
+	}
+	load.loading = false
+	function loadUrl(url: string) {
+		// TODO
 	}
 </script>
 

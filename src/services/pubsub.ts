@@ -84,6 +84,7 @@ export default function initPubsub(params: PubsubOptions, handlers: TopicsHandle
 	pubsub
 		.addHandler("community-points-channel-v1", event => {
 			if (event.type === "reward-redeemed") {
+				console.log(event.data.redemption)
 				const user = event.data.redemption.user.login
 				const reward = event.data.redemption.reward.title
 				const message = event.data.redemption.user_input

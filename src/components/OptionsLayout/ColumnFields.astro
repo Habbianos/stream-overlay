@@ -34,7 +34,8 @@ const { allowMultiple } = Astro.props
 			for (const source of sources) {
 				source.classList.add("source")
 				source.querySelectorAll<HTMLInputElement>("input").forEach(elem => elem.disabled = true)
-				source.querySelectorAll<HTMLInputElement>("option").forEach(elem => elem.disabled = true)
+				source.querySelectorAll<HTMLOptionElement>("option").forEach(elem => elem.disabled = true)
+				source.querySelectorAll<HTMLSelectElement>("select").forEach(elem => elem.disabled = true)
 			}
 			this.makeCopy(sources)
 
@@ -45,7 +46,8 @@ const { allowMultiple } = Astro.props
 				clone.classList.remove("source")
 				source.parentElement?.appendChild(clone)
 	
-				clone.querySelectorAll<HTMLInputElement>("option").forEach(elem => elem.disabled = false)
+				clone.querySelectorAll<HTMLOptionElement>("option").forEach(elem => elem.disabled = false)
+				clone.querySelectorAll<HTMLSelectElement>("select").forEach(elem => elem.disabled = false)
 				clone.querySelectorAll<HTMLInputElement>("input").forEach(elem => {
 					elem.disabled = false
 					elem.addEventListener("change", () => {

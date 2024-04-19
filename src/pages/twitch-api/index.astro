@@ -91,8 +91,12 @@ export type ChatRoomOptions = PubsubOptions &
 						label: "Room Widget",
 						options: [
 							{ name: "Clothes", value: "clothing" },
-							{ name: "Bubble stlye", value: "bubble" },
 							{ name: "Effect", value: "fx" },
+						],
+					}, {
+						label: "Chat Widget",
+						options: [
+							{ name: "Bubble stlye", value: "bubble" },
 						],
 					}]]}
 					info="If you don't fill a prefedined value, remember to enable viewers to fill it in when claiming the reward"
@@ -107,9 +111,11 @@ export type ChatRoomOptions = PubsubOptions &
 			name="onlyFollowers"
 			info="Require the user to follow your channel"
 		/>
-		<Note
-			info="Remmember that you can configure the reward to skip the queue, as we won't confirm the claim in your behalfe. The overley will only capture claims while the page is open."
-		/>
+		<Note>
+			<Fragment slot="info">
+				Remmember that you can configure the Twitch reward to skip the queue, as we won't confirm the claim in your behalfe. <u>The overley will only capture claims while the page is open.</u>
+			</Fragment>
+		</Note>
 	</Section>
 
 	<Separator />
@@ -153,7 +159,8 @@ export type ChatRoomOptions = PubsubOptions &
 			name="url"
 			inputProps={{
 				readonly: true,
-				disabled: true,
+				// disabled: true,
+				onclick: 'this.select()',
 			}}
 		/>
 		<Note info="This widget does not render anything by default, it only process data from Twitch. Only while loading and if unexpected errors occour, the message will be shown." />
