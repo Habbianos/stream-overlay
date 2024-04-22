@@ -42,8 +42,8 @@ const { label, info, id, ...props } = Astro.props;
 		</optgroup>)}
 	</select> : props.type === 'radioImage' ? <>
 		{props.options?.map((o, i) => <label class:list={["radioImage"]}>
-			<input type="radio" name={props.name} checked={i === 0} disabled={!!o.disabled}>
-			<img src={o.value} title={o.name} />
+			<input type="radio" name={props.name} value={o.value} checked={i === 0} disabled={!!o.disabled}>
+			<img src={o.img} title={o.name} />
 		</label>)}
 	</> : <input
 		type={props.type}
@@ -93,6 +93,8 @@ const { label, info, id, ...props } = Astro.props;
 		border: solid 1px #c7c9cb;
 		border-radius: 3px;
 		background-color: #fbfbfb;
+		width: 49px;
+		height: 49px;
 		
 		&:has(input:checked) {
 			border-color: #7289da;
@@ -115,7 +117,7 @@ const { label, info, id, ...props } = Astro.props;
 	button,
 	select {
 		outline: none;
-		width: 100%;
+		flex: 1;
 		padding: 13px;
 		border: solid 1px #c7c9cb;
 		border-radius: 3px;
@@ -130,10 +132,13 @@ const { label, info, id, ...props } = Astro.props;
 			width: 48px;
 			margin: 0;
 			cursor: pointer;
+			flex: unset;
 		}
 		&[type=color] {
+			width: 48px;
 			padding: 5px;
 			cursor: pointer;
+			flex: unset;
 		}
 
 		&:disabled {
@@ -152,6 +157,7 @@ const { label, info, id, ...props } = Astro.props;
 	}
 	.columns {
 		display: flex;
+		flex-wrap: wrap;
 
 		:not(:last-child) {
 			border-top-right-radius: 0;

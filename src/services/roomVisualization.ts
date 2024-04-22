@@ -372,10 +372,13 @@ export type RoomVisOptions = {
 	tilemap?: string
 	width?: number
 	height?: number
+	roomCoordX?: number
+	roomCoordY?: number
 	hideFloor?: boolean
 	floorPlan?: string
 	floorColor?: string
 	floorTexture?: number
+	floorHeight?: number
 	hideWalls?: boolean
 	wallColor?: string
 	wallTexture?: number
@@ -383,7 +386,72 @@ export type RoomVisOptions = {
 	wallDepth?: number
 }
 
-const FLOOR_TEXTURES = ["/textures/floor/tile.png"].map(x => import.meta.env.BASE_URL + x)
+const FLOOR_TEXTURES = [
+	"/textures/floor/tile_0.png",
+	"/textures/floor/tile_1.png",
+	"/textures/floor/tile_2.png",
+	"/textures/floor/tile_3.png",
+	"/textures/floor/tile_4.png",
+	"/textures/floor/tile_5.png",
+	"/textures/floor/tile__0.png",
+	"/textures/floor/tile__1.png",
+].map(x => import.meta.env.BASE_URL + x)
+
+const WALL_TEXTURES = [
+	"/textures/wall/wall_0.png",
+	"/textures/wall/wall_1.png",
+	"/textures/wall/wall_2.png",
+	undefined,// "/textures/wall/wall_3.png",
+	"/textures/wall/wall_4.png",
+	"/textures/wall/wall_5.png",
+	"/textures/wall/wall_6.png",
+	"/textures/wall/wall_7.png",
+	"/textures/wall/wall_8.png",
+	"/textures/wall/wall_9_1.png",
+	"/textures/wall/wall_9_2.png",
+	"/textures/wall/wall_9_3.png",
+	"/textures/wall/wall_9_4.png",
+	"/textures/wall/wall_9_5.png",
+	"/textures/wall/wall_9_6.png",
+	"/textures/wall/wall_9_7.png",
+	"/textures/wall/wall_10.png",
+	"/textures/wall/wall_11.png",
+	"/textures/wall/wall_12.png",
+	"/textures/wall/wall_13.png",
+	"/textures/wall/wall_14.png",
+	"/textures/wall/wall_15.png",
+	"/textures/wall/wall_16.png",
+	"/textures/wall/wall_17.png",
+	"/textures/wall/wall_18_1.png",
+	"/textures/wall/wall_18_2.png",
+	"/textures/wall/wall_19_1.png",
+	"/textures/wall/wall_19_2.png",
+	"/textures/wall/wall_19_3.png",
+	"/textures/wall/wall_20_1.png",
+	"/textures/wall/wall_20_2.png",
+	"/textures/wall/wall_20_3.png",
+	"/textures/wall/wall_21_1.png",
+	"/textures/wall/wall_21_2.png",
+	"/textures/wall/wall_21_3.png",
+	"/textures/wall/wall_21_4.png",
+	"/textures/wall/wall_21_5.png",
+	"/textures/wall/wall_21_6.png",
+	"/textures/wall/wall_22_1.png",
+	"/textures/wall/wall_22_2.png",
+	"/textures/wall/wall_22_3.png",
+	"/textures/wall/wall_22_4.png",
+	"/textures/wall/wall_23_1.png",
+	"/textures/wall/wall_23_2.png",
+	"/textures/wall/wall_23_3.png",
+	"/textures/wall/wall_24.png",
+	"/textures/wall/wall_25.png",
+	"/textures/wall/wall_26.png",
+	"/textures/wall/wall_27.png",
+	"/textures/wall/wall_28.png",
+	"/textures/wall/wall_29.png",
+	"/textures/wall/wall_30.png",
+	"/textures/wall/wall_31.png",
+].map(x => import.meta.env.BASE_URL + x)
 
 export default function initRoomVis(options: RoomVisOptions, container: HTMLCanvasElement) {
 
@@ -393,7 +461,17 @@ export default function initRoomVis(options: RoomVisOptions, container: HTMLCanv
 
 	const ROOM_SIZE = 30
 
-	const tilemap = options.tilemap ?? `
+	const tilemap = options.floorPlan ? options.floorPlan.split(" ").join("\n") : `xxxxxxxx
+xxxxxxxx
+xxxxxxxx
+xxx00000
+xxx00000
+xx000000
+xxx00000
+xxx00000
+xxx00000
+xxx00000
+` /* `
 	${'00'.padStart(ROOM_SIZE + 1, 'x')}
 	${'000'.padStart(ROOM_SIZE + 1, 'x')}
 	${new Array(ROOM_SIZE - 2)
@@ -401,7 +479,7 @@ export default function initRoomVis(options: RoomVisOptions, container: HTMLCanv
 			.map((_, i, a) => (`x`.repeat(a.length - i - 1) + '0000').padEnd(ROOM_SIZE + 3, 'x'))
 			.join("\n")}
 	${'00'.padEnd(ROOM_SIZE + 3, 'x')}
-`
+` */
 
 	const grid = parseTileMapString(tilemap).map((row) =>
 		row.map((type) => (type !== "x" ? Number(type) : -1))
@@ -414,8 +492,8 @@ export default function initRoomVis(options: RoomVisOptions, container: HTMLCanv
 		antialias: false,
 		resolution: window.devicePixelRatio,
 		autoDensity: true,
-		width: options.width ?? 1920,
-		height: options.height ?? 500,
+		// width: options.width ?? 500,
+		// height: options.height ?? 400,
 		transparent: true,
 	});
 	const shroom = Shroom.create({
@@ -428,12 +506,22 @@ export default function initRoomVis(options: RoomVisOptions, container: HTMLCanv
 
 	MiniAvatar.ROOM = room
 
-	room.x = -32;
-	room.y = 410;
+	room.x = options.roomCoordX || 0;
+	room.y = options.roomCoordY || 0;
 
-	room.hideWalls = !!(options.hideWalls ?? true)
+	room.hideFloor = !!(options.hideFloor ?? false)
+	room.tileHeight = options.floorHeight || 8
+	room.hideTileCursor = true
 	room.floorColor = options.floorColor ?? "#4d98e4" // "#989865";
-	room.floorTexture = loadRoomTexture(FLOOR_TEXTURES[options.floorTexture ?? 0]);
+	const floorTexture = FLOOR_TEXTURES[options.floorTexture ?? 0]
+	room.floorTexture = loadRoomTexture(floorTexture);
+
+	room.hideWalls = !!(options.hideWalls || false)
+	room.wallDepth = options.wallDepth || 8
+	room.wallHeight = options.wallHeight || 115
+	room.wallColor = options.wallColor ?? "#4d98e4" // "#989865";
+	const wallTexture = WALL_TEXTURES[options.wallTexture ?? 0]
+	room.wallTexture = loadRoomTexture(wallTexture);
 
 	application.stage.addChild(RoomCamera.forScreen(room));
 

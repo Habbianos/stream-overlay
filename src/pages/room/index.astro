@@ -26,7 +26,9 @@ export type ChatRoomOptions = PubsubOptions &
 <OptionsLayout widgetName="Room" overlayUrl={import.meta.env.BASE_URL + "/room/overlay"}>
 	<Navbar slot="aside">
 		<NavbarTitle name="Room Widget" />
-		<NavbarLink name="Room Layer" link="#room" />
+		<NavbarLink name="General Config" link="#general" />
+		<NavbarLink name="Floor Config" link="#floor" />
+		<NavbarLink name="Wall Config" link="#wall" />
 		<NavbarLink name="Data Layer" link="#data" />
 		<NavbarSep />
 		<NavbarTitle name="Result" />
@@ -34,16 +36,71 @@ export type ChatRoomOptions = PubsubOptions &
 	</Navbar>
 
 	<Section
-		id="room"
-		title="Room Layer"
-		info="A room preview with the current active chatters."
+		id="general"
+		title="General Config"
+		info="Details in how the room looks"
+	>
+		<ColumnFields>
+			<div>
+				<Field
+					label="Canvas Width"
+					placeholder="Width in pixels"
+					type="number"
+					id="canvasWidth"
+					name="canvasWidth"
+					info="The width of the canvas where the room will be rendered in. Default: 800"
+				/>
+			</div>
+			<div>
+				<Field
+					label="Canvas Height"
+					placeholder="Height in pixels"
+					type="number"
+					id="canvasHeight"
+					name="canvasHeight"
+					info="The height of the canvas where the room will be rendered in. Default: 600"
+				/>
+			</div>
+		</ColumnFields>
+		<ColumnFields>
+			<div>
+				<Field
+					label="Room Coord X"
+					placeholder="Position X of the room"
+					type="number"
+					id="roomCoordX"
+					name="roomCoordX"
+					info="The position Y where the room will be rendered. Default: 0"
+				/>
+			</div>
+			<div>
+				<Field
+					label="Room Coord Y"
+					placeholder="Position Y of the room"
+					type="number"
+					id="roomCoordY"
+					name="roomCoordY"
+					info="The position X where the room will be rendered. Default: 0"
+				/>
+			</div>
+		</ColumnFields>
+		<Note info="Keep in mind that in order to display the users correctly, the room should have some additional space above it." />
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="floor"
+		title="Floor Config"
+		info="Change how the floor looks in this widget"
 	>
 		<Field
 			label="Hide Floor"
 			placeholder="Should the floor be visible?"
 			type="checkbox"
-			id="floorHide"
-			name="floorHide"
+			id="hideFloor"
+			name="hideFloor"
+			info="Hidding the floor will also hide the wall."
 		/>
 		<Field
 			label="Floor Plan"
@@ -51,6 +108,7 @@ export type ChatRoomOptions = PubsubOptions &
 			type="text"
 			id="floorPlan"
 			name="floorPlan"
+			info="Space separated definition of the floor. You can copy and paste from the Habbo editor."
 		/>
 		<Field
 			label="Floor Color"
@@ -61,27 +119,55 @@ export type ChatRoomOptions = PubsubOptions &
 			inputProps={{
 				value: "#989865",
 			}}
+			info="Default: #989865"
 		/>
 		<Field
 			label="Floor Texture"
 			placeholder="Choose the floor texture"
 			type="radioImage"
 			options={[
-				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
-				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
-				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+				{ name: "Default", value: 0, img: import.meta.env.BASE_URL + "/icons/floor_0.png" },
+				// { name: "Default", value: 1, img: import.meta.env.BASE_URL + "/icons/floor_1.png" },
+				{ name: "Default", value: 2, img: import.meta.env.BASE_URL + "/icons/floor_2.png" },
+				{ name: "Default", value: 3, img: import.meta.env.BASE_URL + "/icons/floor_3.png" },
+				// { name: "Default", value: 4, img: import.meta.env.BASE_URL + "/icons/floor_4.png" },
+				{ name: "Default", value: 5, img: import.meta.env.BASE_URL + "/icons/floor_5.png" },
+				{ name: "Default", value: 6, img: import.meta.env.BASE_URL + "/icons/floor__0.png" },
+				{ name: "Default", value: 7, img: import.meta.env.BASE_URL + "/icons/floor__1.png" },
 			]}
 			id="floorTexture"
 			name="floorTexture"
 		/>
+		<ColumnFields>
+			<div>
+				<Field
+					label="Floor Height"
+					placeholder="Choose the height of the floor"
+					type="number"
+					id="floorHeight"
+					name="floorHeight"
+					info="Default: 8"
+				/>
+			</div>
+			<div></div>
+		</ColumnFields>
+	</Section>
+
+	<Separator />
+
+	<Section
+		id="wall"
+		title="Wall Config"
+		info="Change how the wall looks in this widget"
+	>
 		<Field
 			label="Hide Walls"
 			placeholder="Choose the color of the floor"
 			type="checkbox"
-			id="floorColor"
-			name="floorColor"
+			id="hideWalls"
+			name="hideWalls"
 			inputProps={{
-				checked: true,
+				// checked: true,
 			}}
 		/>
 		<Field
@@ -91,22 +177,74 @@ export type ChatRoomOptions = PubsubOptions &
 			id="wallColor"
 			name="wallColor"
 			inputProps={{
-				value: "#ffffff",
+				value: "#b6b8c7",
 			}}
+			info="Default: #b6b8c7"
 		/>
 		<Field
 			label="Wall Texture"
 			placeholder="Choose the wall texture"
 			type="radioImage"
 			options={[
-				{ name: "Default (none)", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
-				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
-				{ name: "Default", value: import.meta.env.BASE_URL + "/textures/floor/tile.png" },
+				{ name: "Default (flat)", value: 0, img: import.meta.env.BASE_URL + "/icons/wall_0.png" },
+				{ name: "Squares", value: 1, img: import.meta.env.BASE_URL + "/icons/wall_1.png" },
+				{ name: "Bigger squares", value: 2, img: import.meta.env.BASE_URL + "/icons/wall_2.png" },
+				// { name: "Default", value: 3, img: import.meta.env.BASE_URL + "/icons/wall_3.png" },
+				{ name: "Horizontal lines", value: 4, img: import.meta.env.BASE_URL + "/icons/wall_4.png" },
+				{ name: "Bigger horizontal lines", value: 5, img: import.meta.env.BASE_URL + "/icons/wall_5.png" },
+				{ name: "Bigger horizontal lines (inverted)", value: 6, img: import.meta.env.BASE_URL + "/icons/wall_6.png" },
+				{ name: "Normal and bigger horizontal lines", value: 7, img: import.meta.env.BASE_URL + "/icons/wall_7.png" },
+				{ name: "Vertical lines", value: 8, img: import.meta.env.BASE_URL + "/icons/wall_8.png" },
+				{ name: "Shape (paper - hampton)", value: 9, img: import.meta.env.BASE_URL + "/icons/wall_9_1.png" },
+				{ name: "Shape (love - mandy)", value: 10, img: import.meta.env.BASE_URL + "/icons/wall_9_2.png" },
+				{ name: "Shape (brown - di serria)", value: 11, img: import.meta.env.BASE_URL + "/icons/wall_9_3.png" },
+				{ name: "Shape (florest - chelsea cucumber)", value: 12, img: import.meta.env.BASE_URL + "/icons/wall_9_4.png" },
+				{ name: "Shape (acqua - keppel)", value: 13, img: import.meta.env.BASE_URL + "/icons/wall_9_5.png" },
+				{ name: "Shape (ocean - steel Blue)", value: 14, img: import.meta.env.BASE_URL + "/icons/wall_9_6.png" },
+				{ name: "Shape (lava - thunderbird)", value: 15, img: import.meta.env.BASE_URL + "/icons/wall_9_7.png" },
+				{ name: "Clouds", value: 16, img: import.meta.env.BASE_URL + "/icons/wall_10.png" },
+				{ name: "Default", value: 17, img: import.meta.env.BASE_URL + "/icons/wall_11.png" },
+				{ name: "Default", value: 18, img: import.meta.env.BASE_URL + "/icons/wall_12.png" },
+				{ name: "Default", value: 19, img: import.meta.env.BASE_URL + "/icons/wall_13.png" },
+				{ name: "Default", value: 20, img: import.meta.env.BASE_URL + "/icons/wall_14.png" },
+				{ name: "Default", value: 21, img: import.meta.env.BASE_URL + "/icons/wall_15.png" },
+				{ name: "Default", value: 22, img: import.meta.env.BASE_URL + "/icons/wall_16.png" },
+				{ name: "Default", value: 23, img: import.meta.env.BASE_URL + "/icons/wall_17.png" },
+				{ name: "Default", value: 24, img: import.meta.env.BASE_URL + "/icons/wall_18_1.png" },
+				{ name: "Default", value: 25, img: import.meta.env.BASE_URL + "/icons/wall_18_2.png" },
+				{ name: "Default", value: 26, img: import.meta.env.BASE_URL + "/icons/wall_19_1.png" },
+				{ name: "Default", value: 27, img: import.meta.env.BASE_URL + "/icons/wall_19_2.png" },
+				{ name: "Default", value: 28, img: import.meta.env.BASE_URL + "/icons/wall_19_3.png" },
+				{ name: "Default", value: 29, img: import.meta.env.BASE_URL + "/icons/wall_20_1.png" },
+				{ name: "Default", value: 30, img: import.meta.env.BASE_URL + "/icons/wall_20_2.png" },
+				{ name: "Default", value: 31, img: import.meta.env.BASE_URL + "/icons/wall_20_3.png" },
+				{ name: "Default", value: 32, img: import.meta.env.BASE_URL + "/icons/wall_21_1.png" },
+				{ name: "Default", value: 33, img: import.meta.env.BASE_URL + "/icons/wall_21_2.png" },
+				{ name: "Default", value: 34, img: import.meta.env.BASE_URL + "/icons/wall_21_3.png" },
+				{ name: "Default", value: 35, img: import.meta.env.BASE_URL + "/icons/wall_21_4.png" },
+				{ name: "Default", value: 36, img: import.meta.env.BASE_URL + "/icons/wall_21_5.png" },
+				{ name: "Default", value: 37, img: import.meta.env.BASE_URL + "/icons/wall_21_6.png" },
+				{ name: "Default", value: 38, img: import.meta.env.BASE_URL + "/icons/wall_22_1.png" },
+				{ name: "Default", value: 39, img: import.meta.env.BASE_URL + "/icons/wall_22_2.png" },
+				{ name: "Default", value: 40, img: import.meta.env.BASE_URL + "/icons/wall_22_3.png" },
+				{ name: "Default", value: 41, img: import.meta.env.BASE_URL + "/icons/wall_22_4.png" },
+				{ name: "Default", value: 42, img: import.meta.env.BASE_URL + "/icons/wall_23_1.png" },
+				{ name: "Default", value: 43, img: import.meta.env.BASE_URL + "/icons/wall_23_2.png" },
+				{ name: "Default", value: 44, img: import.meta.env.BASE_URL + "/icons/wall_23_3.png" },
+				{ name: "Default", value: 45, img: import.meta.env.BASE_URL + "/icons/wall_24.png" },
+				{ name: "Default", value: 46, img: import.meta.env.BASE_URL + "/icons/wall_25.png" },
+				{ name: "Default", value: 47, img: import.meta.env.BASE_URL + "/icons/wall_26.png" },
+				{ name: "Default", value: 48, img: import.meta.env.BASE_URL + "/icons/wall_27.png" },
+				{ name: "Default", value: 49, img: import.meta.env.BASE_URL + "/icons/wall_28.png" },
+				{ name: "Default", value: 50, img: import.meta.env.BASE_URL + "/icons/wall_29.png" },
+				{ name: "Default", value: 51, img: import.meta.env.BASE_URL + "/icons/wall_30.png" },
+				{ name: "Default", value: 52, img: import.meta.env.BASE_URL + "/icons/wall_31.png" },
 			]}
 			id="wallTexture"
 			name="wallTexture"
+			info="For fixed color textures, remmember to change the wall color to white for best results."
 		/>
-		<ColumnFields allowMultiple>
+		<ColumnFields>
 			<div>
 				<Field
 					label="Wall Height"
@@ -114,6 +252,7 @@ export type ChatRoomOptions = PubsubOptions &
 					type="number"
 					id="wallHeight"
 					name="wallHeight"
+					info="Default: 115"
 				/>
 			</div>
 			<div>
@@ -123,28 +262,7 @@ export type ChatRoomOptions = PubsubOptions &
 					type="number"
 					id="wallDepth"
 					name="wallDepth"
-				/>
-			</div>
-		</ColumnFields>
-		<ColumnFields allowMultiple>
-			<div>
-				<Field
-					label="Canvas Width"
-					placeholder="Width in pixels"
-					type="number"
-					id="canvasWidth"
-					name="canvasWidth"
-					info="The width of the canvas where the room will be rendered in."
-				/>
-			</div>
-			<div>
-				<Field
-					label="Canvas Height"
-					placeholder="Height in pixels"
-					type="number"
-					id="canvasHeight"
-					name="canvasHeight"
-					info="The height of the canvas where the room will be rendered in."
+					info="Default: 8"
 				/>
 			</div>
 		</ColumnFields>
@@ -163,8 +281,8 @@ export type ChatRoomOptions = PubsubOptions &
 			info="Storage destination"
 			type="radioImage"
 			options={[
-				{ name: "Local Storage", value: import.meta.env.BASE_URL + "/icons/local_storage.png" },
-				{ name: "Cloud Sync (not availabled)", value: import.meta.env.BASE_URL + "/icons/cloud_sync.png", disabled: true },
+				{ name: "Local Storage", value: "local", img: import.meta.env.BASE_URL + "/icons/local_storage.png" },
+				{ name: "Cloud Sync (not availabled)", value: "cloud", img: import.meta.env.BASE_URL + "/icons/cloud_sync.png", disabled: true },
 			]}
 			id="storageOption"
 			name="storageOption"
@@ -196,7 +314,6 @@ export type ChatRoomOptions = PubsubOptions &
 				onclick: 'this.select()',
 			}}
 		/>
-		<Note info="This widget does not render anything by default, it only process data from Twitch. Only while loading and if unexpected errors occour, the message will be shown." />
 		<iframe />
 	</Section>
 </OptionsLayout>

@@ -4,5 +4,9 @@ import RootLayout from '@/layouts/RootLayout.astro'
 ---
 
 <RootLayout>
-aaab
+<ul>
+	<li><a href={import.meta.env.BASE_URL + "/twitch-api/"}>Twitch API</a></li>
+	<li><a href={import.meta.env.BASE_URL + "/room/"}>Room</a></li>
+	<li><a href={import.meta.env.BASE_URL + "/chat/"}>Chat</a></li>
+</ul>
 </RootLayout>

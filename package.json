@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "npm run build && gh-pages -d dist",
+    "deploy": "npm run build && gh-pages --nojekyll -d dist",
     "dump": "shroom dump --url https://www.habbo.com/gamedata/external_variables/1 --location ./public/resources",
     "dump:finish": "npm run dump:finish:1 && npm run dump:finish:2 && npm run dump:finish:3 && npm run dump:finish:4",
     "dump:finish:1": "find ./public/resources/effects -type f ! -name \"*.shroom\" -delete",

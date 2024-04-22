@@ -4,7 +4,4 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
 	site: 'https://habbianos.github.io',
 	base: 'stream-overlay',
-	build: {
-		assets: 'astro',
-	},
 });

@@ -73,8 +73,8 @@ export type ChatRoomOptions = PubsubOptions &
 			info="Storage destination"
 			type="radioImage"
 			options={[
-				{ name: "Local Storage", value: import.meta.env.BASE_URL + "/icons/local_storage.png" },
-				{ name: "Cloud Sync (not availabled)", value: import.meta.env.BASE_URL + "/icons/cloud_sync.png", disabled: true },
+				{ name: "Local Storage", value: "local", img: import.meta.env.BASE_URL + "/icons/local_storage.png" },
+				{ name: "Cloud Sync (not availabled)", value: "cloud", img: import.meta.env.BASE_URL + "/icons/cloud_sync.png", disabled: true },
 			]}
 			id="storageOption"
 			name="storageOption"

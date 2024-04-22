@@ -30,8 +30,13 @@ const { widgetName, overlayUrl } = Astro.props
 		load()
 		update();
 	}
+	let updateTimeout
 	init()
 	function update(evt?: Event) {
+		if (updateTimeout) clearTimeout(updateTimeout)
+		updateTimeout = setTimeout(() => _update(evt), 500)
+	}
+	function _update(evt?: Event) {
 		if (evt?.target?.id === 'url') {
 			loadUrl(evt.target.value)
 			return
