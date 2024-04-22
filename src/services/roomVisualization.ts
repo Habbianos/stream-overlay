@@ -523,7 +523,9 @@ xxx00000
 	const wallTexture = WALL_TEXTURES[options.wallTexture ?? 0]
 	room.wallTexture = loadRoomTexture(wallTexture);
 
-	application.stage.addChild(RoomCamera.forScreen(room));
+	const cam = RoomCamera.forScreen(room)
+	cam._state.type = 'OFF'
+	application.stage.addChild(cam);
 
 	return { updateAvatar, setEffect }
 }
